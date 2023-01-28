@@ -9,6 +9,9 @@ const Home = () => {
                 <Button variant="contained">
                     <Link to="/login">Go to Login</Link>
                 </Button>
+                <Button variant="contained">
+                    <Link to="/modal">Go to Modal page</Link>
+                </Button>
             </div>
         </>
     )

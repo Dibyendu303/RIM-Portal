@@ -16,7 +16,7 @@ const theme = createTheme({
             // contrastText: will be calculated to contrast with palette.primary.main
         },
         text: {
-            primary: "rgba(255, 255, 255, 1)"
+            primary: "rgba(255, 255, 255, 0.8)"
         }
     },
 });
@@ -27,7 +27,7 @@ const Login = () => {
         <>
             <ThemeProvider theme={theme}>
                 <div className='login-container h-full w-screen' style={{ backgroundImage: `url(${background})` }} >
-                    <div className='bg-[#07689F] min-h-screen h-full w-full md:w-6/12 l:w-5/12 px-12 py-16'>
+                    <div className='bg-[#032538] min-h-screen h-full w-full md:w-6/12 lg:w-5/12 px-12 py-16'>
                         <h1 className='text-[4.5rem] font-bold text-white max-w-md mx-auto md:mx-0'>
                             RIM
                         </h1>
@@ -50,11 +50,10 @@ const Login = () => {
                                     color: 'rgba(255, 255, 255, 0.6)'
                                 }
                             }} />
-                            <div className='flex justify-between items-center'>
-                                <span className='text-white/80 hover:underline cursor-pointer'>Forgot Password?</span>
+                            <div className='flex justify-end items-center'>
                                 <Button
                                     style={{
-                                        backgroundColor: "#033B5A",
+                                        backgroundColor: "#021018",
                                         color: "white",
                                         padding: "0.5rem 2rem",
                                         boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"

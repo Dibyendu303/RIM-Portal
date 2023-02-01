@@ -12,6 +12,9 @@ const Home = () => {
                 <Button variant="contained">
                     <Link to="/modal">Go to Modal page</Link>
                 </Button>
+                <Button variant="contained">
+                    <Link to="/table">Go to Table</Link>
+                </Button>
             </div>
         </>
     )

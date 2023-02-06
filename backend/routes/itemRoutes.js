@@ -5,4 +5,4 @@ itemRouter.route("/")
     .post(addItem)
     .get(listAllItems);
 itemRouter.get("/download", download);
-module.exports(itemRouter);
+module.exports = itemRouter;

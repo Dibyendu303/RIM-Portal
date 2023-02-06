@@ -4,4 +4,4 @@ const { getSentRequests, getReceivedRequests, newRequest } = require("../control
 requestRouter.get("/sent", getSentRequests)
 requestRouter.get("/received", getReceivedRequests);
 requestRouter.post("/", newRequest);
-module.exports(requestRouter);
+module.exports = requestRouter;

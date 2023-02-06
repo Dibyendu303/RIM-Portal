@@ -21,10 +21,12 @@ module.exports.getReceivedRequests= async(req, res)=>{
     }
 }
 
-module.exports.newRequest = async(req,res)=>{
-    const newRequest= new Request(req.body);
+module.exports.newRequest = (req,res)=>{
+    const request = req.body;
+    const newRequest= new Request(request);
     try{
         newRequest.save();
+        res.send(newRequest);
     }
     catch (err){
         res.send(err);

@@ -1,6 +1,6 @@
 const Request = require("../models/requestSchema.js");
 
-export const getSentRequests= async(req, res)=>{
+module.exports.getSentRequests= async(req, res)=>{
     try{
         const allRequests= await Request.find({requestedBy: req.body.requestedBy});
         res.json(allRequests);
@@ -10,7 +10,7 @@ export const getSentRequests= async(req, res)=>{
         console.log(err);
     }
 }
-export const getReceivedRequests= async(req, res)=>{
+module.exports.getReceivedRequests= async(req, res)=>{
     try{
         const allRequests= await Request.find({ownedBy: req.body.requestedBy});
         res.json(allRequests);
@@ -21,11 +21,10 @@ export const getReceivedRequests= async(req, res)=>{
     }
 }
 
-export const newRequest = async(req,res)=>{
+module.exports.newRequest = async(req,res)=>{
     const newRequest= new Request(req.body);
     try{
         newRequest.save();
-
     }
     catch (err){
         res.send(err);

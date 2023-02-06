@@ -1,6 +1,6 @@
 const Item=require("../models/itemSchema.js")
 
-export const download = async (req,res) =>{
+module.exports.download = async (req,res) =>{
     try{
         const item = await Item.findByID(req.body.ID);
         res.status(200).json({"link":item[req.body.type]}); //ToDo:
@@ -11,11 +11,12 @@ export const download = async (req,res) =>{
     }
 }
 
-export const addItem =async(req,res) => {
-    const newItem= new Item(req.body);
+module.exports.addItem = (req,res) => {
+    const item= req.body;
+    const newItem= new Item(item);
     try{
         newItem.save()
-        res.json(newItem); // Can be removed
+        res.send(newItem); // Can be removed
     }
     catch(err){
         res.send(err);
@@ -23,10 +24,10 @@ export const addItem =async(req,res) => {
     }
 }
 
-export const listAllItems =async(req,res)=>{
+module.exports.listAllItems =async(req,res)=>{
     try{
         const items= await Item.find();
-        res.json(items);
+        res.status(201).json(items);
     }
     catch{
         res.send(err);

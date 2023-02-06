@@ -5,5 +5,4 @@ const userScehma= new mongoose.Schema({
     club: String,
     outlookID:String
 })
-const User=mongoose.model("User",userSchema);
-export default User;
+module.exports=mongoose.model("User",userSchema);

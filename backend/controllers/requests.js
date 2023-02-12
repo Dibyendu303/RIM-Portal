@@ -12,7 +12,7 @@ module.exports.getSentRequests= async(req, res)=>{
 }
 module.exports.getReceivedRequests= async(req, res)=>{
     try{
-        const allRequests= await Request.find({ownedBy: req.body.ownedBy});
+        const allRequests= await Request.find({ownedBy: req.body.requestedBy});
         res.json(allRequests);
     }
     catch(err){

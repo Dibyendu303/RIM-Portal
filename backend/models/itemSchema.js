@@ -11,7 +11,13 @@ const itemSchema= new mongoose.Schema({
     "sanctionLetter": String,
     "purchaseOrder": String,
     "status": String,
-    "remarks": String
+    "remarks": String,
+    "occupiedTime": [
+        {
+            "Start": Date,
+            "End": Date
+        }
+    ]
 });
 
 module.exports=mongoose.model("Item", itemSchema);

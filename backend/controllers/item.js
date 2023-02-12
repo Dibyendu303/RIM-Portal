@@ -13,6 +13,7 @@ module.exports.download = async (req,res) =>{
 
 module.exports.addItem = (req,res) => {
     const item= req.body;
+    item.ownedBy = req.user;
     const newItem= new Item(item);
     try{
         newItem.save()

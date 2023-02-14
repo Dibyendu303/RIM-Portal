@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./NavStyle.css";
+import { IoSearch } from "react-icons/io5";
 
 function Navbar() {
   return (
@@ -12,25 +12,31 @@ function Navbar() {
           <Link to="/" className="hover:text-white">
             Home
           </Link>
-          <div className="dropdown text-white/70 hover:text-white">
-            <p className="cursor-pointer">Request</p>
-            <div className="dropdown-content">
-              <Link to="/" className="text-white/70 hover:text-white hover:bg-[#217cb0]">
-                Requests-Sent
+          <div className="dropdown group text-white/70 hover:text-white">
+            <p className="cursor-pointer">Requests</p>
+
+            <div className="dropdown-content z-10 absolute bg-[#032538] hidden group-hover:block shadow-xl">
+              <Link to="/" className="block px-4 py-3 text-white/70 hover:text-white hover:bg-[#217cb0]">
+                Requests - Sent
               </Link>
-              <Link to="/" className="text-white/70 hover:text-white hover:bg-[#217cb0]">
-                Requests-Received
+              <Link to="/" className="block px-4 py-3 text-white/70 hover:text-white hover:bg-[#217cb0]">
+                Requests - Received
               </Link>
             </div>
           </div>
         </div>
-        <div className="flex">
-          <input
-            className="searchbar"
-            type="search"
-            placeholder="Search item"
-          ></input>
-          <button className="addbtn">Add item +</button>
+        <div className="flex gap-6">
+          <div className="flex">
+            <input
+              className="searchbar border-none outline-none text-sm px-5 py-2 w-72"
+              type="text"
+              placeholder="Search item"
+            ></input>
+            <div className="flex justify-center items-center bg-[#A2D5F2] px-4 cursor-pointer text-xl text-[#032538] hover:bg-[#52a6de]">
+              <IoSearch />
+            </div>
+          </div>
+          <button className="cursor-pointer flex justify-center items-center text-sm text-[#032538] font-medium bg-[#A2D5F2] hover:bg-[#52a6de] px-5">Add item +</button>
         </div>
       </div>
     </>

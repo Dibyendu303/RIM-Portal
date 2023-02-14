@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Modal from './components/Modal';
-import CollapsibleTable from './components/CollapsibleTable';
+import EnhancedTable from './components/EnhancedTable';
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/modal" element={<Modal />} />
-        <Route path="/table" element={<CollapsibleTable />} />
+        <Route path="/table" element={<EnhancedTable />} />
       </Routes>
     </BrowserRouter>
   );

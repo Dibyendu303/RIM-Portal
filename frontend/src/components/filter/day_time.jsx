@@ -11,7 +11,7 @@ const Wrap = styled.div`
 
     display: flex;
     flex-direction: row;
-    gap: 4px;
+    gap: 8px;
 
 `;
 

@@ -118,7 +118,7 @@ const headCells = [
     {
         id: 'name',
         numeric: false,
-        disablePadding: true,
+        disablePadding: false,
         label: 'Item name',
     },
     {
@@ -160,7 +160,7 @@ function EnhancedTableHead(props) {
                 {headCells.map((headCell) => (
                     <StyledTableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={headCell.numeric ? 'center' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -206,14 +206,14 @@ function Row(props) {
                     component="th"
                     id={labelId}
                     scope="row"
-                    padding="none"
+                    padding= '8'
                 >
                     {row.name}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
+                <TableCell align="center">{row.calories}</TableCell>
+                <TableCell align="center">{row.fat}</TableCell>
+                <TableCell align="center">{row.carbs}</TableCell>
+                <TableCell align="center">{row.protein}</TableCell>
                 <TableCell >
                     <IconButton
                         aria-label="expand row"
@@ -225,7 +225,7 @@ function Row(props) {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>

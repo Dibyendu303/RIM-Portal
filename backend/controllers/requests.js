@@ -28,17 +28,16 @@ module.exports.acceptRequest= async(req,res)=>{
             {_id:req.body.requestId},
             {requestStatus:"Accepted"}
         );
+        newTime = targetRequest.requestTime;
+        // occupiedTime = {Start : "2016-05-18T16:00:00Z", End: "2016-05-18T16:00:00Z"}
         const item= await Item.findOneAndUpdate(
-            {_id:req.body.itemId},
-            {heldBy:targetRequest.requestedBy,status:"Unavailaible"}
+            {_id:targetRequest.itemId},
+            {"heldBy":targetRequest.requestedBy,"status":"Unavailable", $push: {"occupiedTime": newTime}}
         );
         res.json({
             item: item,
             req: targetRequest
         })
-        
-        
-
     }
     catch (err){
         res.send(err);
@@ -61,6 +60,7 @@ module.exports.rejectRequest= async(req,res)=>{
 module.exports.newRequest = (req,res)=>{
     const request = req.body;
     const newRequest= new Request(request);
+    const itemId= req.body.itemId;
     try{
         newRequest.save();
         res.send(newRequest);

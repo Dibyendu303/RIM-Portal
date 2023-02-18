@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -27,7 +27,9 @@ export default function Modal() {
     const [purchaseDate, setPurchaseDate] = React.useState(dayjs());
     const [ownedBy, setOwnedBy] = React.useState('');
     const [category, setCategory] = React.useState('');
-    // const [booked, setBooked] = useState([]);
+    const [booked, setBooked] = useState({});
+    const [errorRange, setErrorRange] = useState(false);
+
     const handleOwnership = (event) => {
         setOwnedBy(event.target.value);
     };
@@ -53,7 +55,15 @@ export default function Modal() {
         setOpenAddModal(false);
     };
 
-    const occupiedTime = [
+    function roundMinutes(d) {
+        const date = new Date(d);
+        date.setHours(date.getHours() + Math.round(date.getMinutes() / 60));
+        date.setMinutes(0, 0, 0); // Resets also seconds and milliseconds
+
+        return date.getTime();
+    }
+
+    let timeSlot = [
         {
             Start: 1675286076000,
             End: 1675472840000
@@ -63,10 +73,37 @@ export default function Modal() {
             End: 1676012276000
         }
     ];
-    // occupiedTime.forEach(item => {
-    //     console.log(new Date(item.Start));
-    //     console.log(new Date(item.End));
-    // })
+
+    //set occupied time to next nearest hour   
+    const occupiedTime = timeSlot.map((item) => {
+        return { Start: roundMinutes(item.Start), End: roundMinutes(item.End) };
+    })
+
+    useEffect(() => {
+
+        const temp = { ...booked, startDate: new Date().getTime(), endDate: new Date().getTime(), startTime: new Date().getTime(), endTime: new Date().getTime() };
+        setBooked(temp);
+        // eslint-disable-next-line
+    }, [])
+
+    const isValidRange = () => {
+        const sDate = new Date(booked.startDate);
+        const sTime = new Date(booked.startTime);
+        const eDate = new Date(booked.endDate);
+        const eTime = new Date(booked.endTime);
+        const startRange = new Date(sDate.getFullYear(), sDate.getMonth(), sDate.getDate(), sTime.getHours(), sTime.getMinutes(), sTime.getSeconds()).getTime();
+        const endRange = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate(), eTime.getHours(), eTime.getMinutes(), eTime.getSeconds()).getTime();
+        // console.log("Startrange: " + startRange);
+        // console.log("endRange: " + endRange);
+        let flag = false;
+        occupiedTime.forEach((item => {
+            if (startRange <= item.Start && item.End <= endRange) {
+                flag = true;
+            }
+        }))
+        return flag;
+    }
+
     const checkAvailabilityDate = (date) => {
         //return true if disabled
         const dt = date.toDate();
@@ -115,10 +152,19 @@ export default function Modal() {
                     flag = true;
                 }
             }))
+
             return flag;
         }
         return false;
     };
+
+
+
+    useEffect(() => {
+        const flag = isValidRange();
+        setErrorRange(flag);
+        // console.log("Range is: " + flag);
+    }, [booked])
 
     return (
         <div className='h-screen flex flex-col justify-center items-center border gap-12'>
@@ -157,9 +203,9 @@ export default function Modal() {
                                         setStartDate(newValue);
                                         // setStartTime(newValue);
                                         // console.log(newValue.toDate());
-                                        // const temp = [...booked, newValue.toDate().getTime()];
+                                        const temp = { ...booked, startDate: newValue.toDate().getTime() };
                                         // console.log(temp);
-                                        // setBooked(temp);
+                                        setBooked(temp);
                                     }}
                                     shouldDisableDate={checkAvailabilityDate}
                                 />
@@ -169,8 +215,12 @@ export default function Modal() {
                                     value={startTime}
                                     onChange={(newValue) => {
                                         setStartTime(newValue);
+                                        const temp = { ...booked, startTime: newValue.toDate().getTime() };
+                                        // console.log(temp);
+                                        setBooked(temp);
                                         // console.log(newValue.toDate().getTime());
                                     }}
+                                    disabled={!booked.startDate}
                                     // views={['hours']}
                                     // disableMinutes={true}
                                     shouldDisableTime={checkAvailabilityStart}
@@ -184,7 +234,9 @@ export default function Modal() {
                                     value={endDate}
                                     onChange={(newValue) => {
                                         setEndDate(newValue);
-                                        // setEndTime(newValue);
+                                        const temp = { ...booked, endDate: newValue.toDate().getTime() };
+                                        // console.log(temp);
+                                        setBooked(temp);
                                     }}
                                     shouldDisableDate={checkAvailabilityDate}
                                 />
@@ -194,13 +246,18 @@ export default function Modal() {
                                     value={endTime}
                                     onChange={(newValue) => {
                                         setEndTime(newValue);
+                                        const temp = { ...booked, endTime: newValue.toDate().getTime() };
+                                        // console.log(temp);
+                                        setBooked(temp);
                                     }}
+                                    disabled={!booked.endDate}
                                     shouldDisableTime={checkAvailabilityEnd}
                                 />
                             </div>
+                            {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Enter valid date range</p>}
                         </div>
                     </LocalizationProvider>
-                    <div className='mt-8 flex flex-col gap-8'>
+                    <div className='mt-6 flex flex-col gap-8'>
                         <TextField id="remarks" label="Purpose/Remarks" variant="outlined" />
                         <TextField required id="remarks" label="Quantity" variant="outlined" />
                     </div>
@@ -218,7 +275,7 @@ export default function Modal() {
                         color: "white",
                         padding: "0.5rem 2rem",
                         // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                    }}>Submit</Button>
+                    }} disabled={errorRange}>Submit</Button>
                 </DialogActions>
             </Dialog>
 

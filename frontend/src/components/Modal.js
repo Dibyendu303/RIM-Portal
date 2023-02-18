@@ -4,13 +4,14 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -19,11 +20,14 @@ import Select from '@mui/material/Select';
 export default function Modal() {
     const [openRequest, setOpenRequest] = useState(false);
     const [openAddModal, setOpenAddModal] = useState(false);
-    const [startValue, setStartValue] = React.useState(dayjs());
-    const [endValue, setEndValue] = React.useState(dayjs());
+    const [startDate, setStartDate] = React.useState(dayjs());
+    const [endDate, setEndDate] = React.useState(dayjs());
+    const [startTime, setStartTime] = React.useState(dayjs('2020-01-01 12:00'));
+    const [endTime, setEndTime] = React.useState(dayjs('2020-01-01 12:00'));
     const [purchaseDate, setPurchaseDate] = React.useState(dayjs());
     const [ownedBy, setOwnedBy] = React.useState('');
     const [category, setCategory] = React.useState('');
+    const [booked, setBooked] = useState([]);
     const handleOwnership = (event) => {
         setOwnedBy(event.target.value);
     };
@@ -47,6 +51,35 @@ export default function Modal() {
 
     const handleCloseAddModal = () => {
         setOpenAddModal(false);
+    };
+
+    const occupiedTime = [
+        {
+            Start: 1675286076000,
+            End: 1675472840000
+        },
+        {
+            Start: 1675712800000,
+            End: 1676012276000
+        }
+    ];
+    occupiedTime.map(item => {
+        console.log(new Date(item.Start));
+        console.log(new Date(item.End));
+    })
+    const checkAvailabilityDate = (date) => {
+        //return true if disabled
+
+        const time1 = date.toDate().getTime();
+        const time2 = date.toDate().getTime() + 86400000;
+
+        let flag = false;
+        occupiedTime.forEach((item => {
+            if (item.Start <= time1 && time2 <= item.End) {
+                flag = true;
+            }
+        }))
+        return flag;
     };
 
     return (
@@ -74,25 +107,68 @@ export default function Modal() {
                         To subscribe to this website, please enter your email address here. We
                         will send updates occasionally.
                     </DialogContentText> */}
-                    <h3 className='font-medium mt-2 mb-4'>Select Time</h3>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <div className='flex justify-between gap-8'>
-                            <DateTimePicker
-                                renderInput={(props) => <TextField {...props} />}
-                                label="From"
-                                value={startValue}
-                                onChange={(newValue) => {
-                                    setStartValue(newValue);
-                                }}
-                            />
-                            <DateTimePicker
-                                renderInput={(props) => <TextField {...props} />}
-                                label="To"
-                                value={endValue}
-                                onChange={(newValue) => {
-                                    setEndValue(newValue);
-                                }}
-                            />
+                        <div>
+                            <h3 className='font-medium mt-2 mb-4'>From Time</h3>
+                            <div className='flex justify-between gap-8'>
+                                <DatePicker
+                                    renderInput={(props) => <TextField {...props} />}
+                                    label="Select Date"
+                                    value={startDate}
+                                    onChange={(newValue) => {
+                                        setStartDate(newValue);
+                                        // console.log(newValue.toDate());
+                                        const temp = [...booked, newValue.toDate().getTime()];
+                                        console.log(temp);
+                                        setBooked(temp);
+                                    }}
+                                    shouldDisableDate={checkAvailabilityDate}
+                                />
+                                <TimePicker
+                                    renderInput={(params) => <TextField {...params} />}
+                                    label="Select Time"
+                                    value={startTime}
+                                    onChange={(newValue) => {
+                                        setStartTime(newValue);
+                                        console.log(newValue.toDate());
+                                    }}
+                                    // views={['hours']}
+                                    disableMinutes={true}
+                                    shouldDisableTime={(timeValue, clockType) => {
+                                        if (clockType === 'hours' && timeValue % 2) {
+                                            return true;
+                                        }
+                                        return false;
+                                    }}
+                                />
+                            </div>
+                            <h3 className='font-medium my-4'>To Time</h3>
+                            <div className='flex justify-between gap-8'>
+                                <DatePicker
+                                    renderInput={(props) => <TextField {...props} />}
+                                    label="Select Date"
+                                    value={endDate}
+                                    onChange={(newValue) => {
+                                        setEndDate(newValue);
+                                    }}
+                                    shouldDisableDate={checkAvailabilityDate}
+                                />
+                                <TimePicker
+                                    renderInput={(params) => <TextField {...params} />}
+                                    label="Select Time"
+                                    value={endTime}
+                                    onChange={(newValue) => {
+                                        setEndTime(newValue);
+                                    }}
+                                    shouldDisableTime={(timeValue, clockType) => {
+                                        if (clockType === 'hours' && timeValue % 2) {
+                                            return true;
+                                        }
+
+                                        return false;
+                                    }}
+                                />
+                            </div>
                         </div>
                     </LocalizationProvider>
                     <div className='mt-8 flex flex-col gap-8'>

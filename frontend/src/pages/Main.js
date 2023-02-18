@@ -6,9 +6,9 @@ import Filter from '../components/filter/Filter.jsx'
 
 const Main = () => {
     return (
-        <div style={{ backgroundColor: "#011018", height: "1100px" }}>
+        <div className="bg-[#011018]">
             <Navbar />
-            <div className='h-screen flex flex-row gap-4 pt-4'>
+            <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
                 <EnhancedTable></EnhancedTable>
             </div>

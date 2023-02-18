@@ -22,12 +22,12 @@ export default function Modal() {
     const [openAddModal, setOpenAddModal] = useState(false);
     const [startDate, setStartDate] = React.useState(dayjs());
     const [endDate, setEndDate] = React.useState(dayjs());
-    const [startTime, setStartTime] = React.useState(dayjs('2020-01-01 12:00'));
-    const [endTime, setEndTime] = React.useState(dayjs('2020-01-01 12:00'));
+    const [startTime, setStartTime] = React.useState(dayjs());
+    const [endTime, setEndTime] = React.useState(dayjs());
     const [purchaseDate, setPurchaseDate] = React.useState(dayjs());
     const [ownedBy, setOwnedBy] = React.useState('');
     const [category, setCategory] = React.useState('');
-    const [booked, setBooked] = useState([]);
+    // const [booked, setBooked] = useState([]);
     const handleOwnership = (event) => {
         setOwnedBy(event.target.value);
     };
@@ -63,16 +63,18 @@ export default function Modal() {
             End: 1676012276000
         }
     ];
-    occupiedTime.map(item => {
-        console.log(new Date(item.Start));
-        console.log(new Date(item.End));
-    })
+    // occupiedTime.forEach(item => {
+    //     console.log(new Date(item.Start));
+    //     console.log(new Date(item.End));
+    // })
     const checkAvailabilityDate = (date) => {
         //return true if disabled
+        const dt = date.toDate();
+        const time1 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 0, 0, 0).getTime();
+        const time2 = time1 + 86400000;
 
-        const time1 = date.toDate().getTime();
-        const time2 = date.toDate().getTime() + 86400000;
-
+        // console.log(date.toDate());
+        // console.log(time1 + " " + time2);
         let flag = false;
         occupiedTime.forEach((item => {
             if (item.Start <= time1 && time2 <= item.End) {
@@ -80,6 +82,42 @@ export default function Modal() {
             }
         }))
         return flag;
+    };
+    const checkAvailabilityStart = (timeValue, clockType) => {
+        //return true if disabled
+        if (clockType === 'hours') {
+            const date = startDate.toDate();
+            const hour1 = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeValue).getTime();
+            const hour2 = hour1 + 3600000;
+            // console.log(date);
+            // console.log("hours: " + hour1 + " " + hour2);
+            let flag = false;
+            occupiedTime.forEach((item => {
+                if (item.Start <= hour1 && hour2 <= item.End) {
+                    flag = true;
+                }
+            }))
+            return flag;
+        }
+        return false;
+    };
+    const checkAvailabilityEnd = (timeValue, clockType) => {
+        //return true if disabled
+        if (clockType === 'hours') {
+            const date = endDate.toDate();
+            const hour1 = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeValue).getTime();
+            const hour2 = hour1 + 3600000;
+            // console.log(date);
+            // console.log("hours: " + hour1 + " " + hour2);
+            let flag = false;
+            occupiedTime.forEach((item => {
+                if (item.Start <= hour1 && hour2 <= item.End) {
+                    flag = true;
+                }
+            }))
+            return flag;
+        }
+        return false;
     };
 
     return (
@@ -117,10 +155,11 @@ export default function Modal() {
                                     value={startDate}
                                     onChange={(newValue) => {
                                         setStartDate(newValue);
+                                        // setStartTime(newValue);
                                         // console.log(newValue.toDate());
-                                        const temp = [...booked, newValue.toDate().getTime()];
-                                        console.log(temp);
-                                        setBooked(temp);
+                                        // const temp = [...booked, newValue.toDate().getTime()];
+                                        // console.log(temp);
+                                        // setBooked(temp);
                                     }}
                                     shouldDisableDate={checkAvailabilityDate}
                                 />
@@ -130,16 +169,11 @@ export default function Modal() {
                                     value={startTime}
                                     onChange={(newValue) => {
                                         setStartTime(newValue);
-                                        console.log(newValue.toDate());
+                                        // console.log(newValue.toDate().getTime());
                                     }}
                                     // views={['hours']}
-                                    disableMinutes={true}
-                                    shouldDisableTime={(timeValue, clockType) => {
-                                        if (clockType === 'hours' && timeValue % 2) {
-                                            return true;
-                                        }
-                                        return false;
-                                    }}
+                                    // disableMinutes={true}
+                                    shouldDisableTime={checkAvailabilityStart}
                                 />
                             </div>
                             <h3 className='font-medium my-4'>To Time</h3>
@@ -150,6 +184,7 @@ export default function Modal() {
                                     value={endDate}
                                     onChange={(newValue) => {
                                         setEndDate(newValue);
+                                        // setEndTime(newValue);
                                     }}
                                     shouldDisableDate={checkAvailabilityDate}
                                 />
@@ -160,13 +195,7 @@ export default function Modal() {
                                     onChange={(newValue) => {
                                         setEndTime(newValue);
                                     }}
-                                    shouldDisableTime={(timeValue, clockType) => {
-                                        if (clockType === 'hours' && timeValue % 2) {
-                                            return true;
-                                        }
-
-                                        return false;
-                                    }}
+                                    shouldDisableTime={checkAvailabilityEnd}
                                 />
                             </div>
                         </div>

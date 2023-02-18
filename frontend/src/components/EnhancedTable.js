@@ -81,6 +81,21 @@ const rows = [
     createData('Nougat', 360, 19.0, 9, 37.0),
     createData('Oreo', 437, 18.0, 63, 4.0),
 ];
+// const rows = [
+//     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
+//     createData('Donut', "Donut", 25.0, 51, 4.9),
+//     createData('Eclair', "Eclair", 16.0, 24, 6.0),
+//     createData('Frozen yoghurt', 'Frozen yoghurt', 6.0, 24, 4.0),
+//     createData('Ice cream sandwich', 'Ice cream sandwich', 9.0, 37, 4.3),
+//     createData('Gingerbread', 'Gingerbread', 16.0, 49, 3.9),
+//     createData('Honeycomb', 'Honeycomb', 3.2, 87, 6.5),
+//     createData('Jelly Bean', 'Jelly Bean', 0.0, 94, 0.0),
+//     createData('KitKat', 'KitKat', 26.0, 65, 7.0),
+//     createData('Lollipop', 'Lollipop', 0.2, 98, 0.0),
+//     createData('Marshmallow', 'Marshmallow', 0, 81, 2.0),
+//     createData('Nougat', 'Nougat', 19.0, 9, 37.0),
+//     createData('Oreo', 'Oreo', 18.0, 63, 4.0),
+// ];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -164,7 +179,6 @@ function EnhancedTableHead(props) {
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
-                        {/* <div className='text-red-200 hover:text-green-500'> */}
                         <TableSortLabel
                             active={orderBy === headCell.id}
                             direction={orderBy === headCell.id ? order : 'asc'}
@@ -177,7 +191,6 @@ function EnhancedTableHead(props) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                        {/* </div> */}
                     </StyledTableCell>
                 ))}
                 <StyledTableCell />
@@ -188,7 +201,7 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
     onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
+    // onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
@@ -206,7 +219,6 @@ function Row(props) {
                     component="th"
                     id={labelId}
                     scope="row"
-                    padding= '8'
                 >
                     {row.name}
                 </TableCell>
@@ -225,7 +237,7 @@ function Row(props) {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>

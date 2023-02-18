@@ -16,9 +16,16 @@ const authenticateToken = (req, res, next)=>{
         });
     }
 }
+
+//With authentication token
+// itemRouter.route("/")
+//     .post(authenticateToken, addItem)
+//     .get(authenticateToken, listAllItems);
+
+//Without token
 itemRouter.route("/")
-    .post(authenticateToken, addItem)
-    .get(authenticateToken, listAllItems);
+    .post(addItem)
+    .get(listAllItems);
 itemRouter.get("/download", authenticateToken, download);
 module.exports = itemRouter;
 

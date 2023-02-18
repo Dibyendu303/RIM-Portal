@@ -1,12 +1,15 @@
 const mongoose= require("mongoose");
 
 const requestSchema= new mongoose.Schema({
-    itemName: String,
+    itemId: mongoose.Schema.Types.ObjectId,
     category: String,
     ownedBy: String,
     requestedBy: String,
     quantity: Number,
-    requestTime: String,
+    requestTime: {
+        "Start": Date,
+        "End": Date
+    },
     inTime: String,
     outTime: String,
     requestStatus: String,

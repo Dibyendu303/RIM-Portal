@@ -12,15 +12,29 @@ module.exports.download = async (req,res) =>{
 }
 
 module.exports.addItem = (req,res) => {
-    const item= req.body;
-    item.ownedBy = req.user;
+    const data= req.body;
+    data.ownedBy = req.user;
+    const item= {
+        "name": data.name,
+        "category": data.category,
+        "ownedBy": data.ownedBy,
+        "heldBy": data.ownedBy,
+        "quantity": data.quantity,
+        "purchasedOn": data.purchasedOn,
+        "bill": data.bill,
+        "sanctionLetter": data.sanctionLetter,
+        "purchaseOrder": data.purchasedOrder,
+        "status": data.status,
+        "remarks": data.remarks,
+        "occupiedTime": []
+    }
     const newItem= new Item(item);
     try{
         newItem.save()
-        res.send(newItem); // Can be removed
+        res.status(201).send(newItem); // Can be removed
     }
     catch(err){
-        res.send(err);
+        res.status(500).send(err);
         console.log(err);
     }
 }
@@ -31,7 +45,7 @@ module.exports.listAllItems =async(req,res)=>{
         res.status(201).json(items);
     }
     catch{
-        res.send(err);
+        res.status(500).send(err);
         console.log(err);
     }
 }

@@ -17,6 +17,9 @@ const Home = () => {
                 <Button variant="contained">
                     <Link to="/table">Go to Table</Link>
                 </Button>
+                <Button variant="contained">
+                    <Link to="/main">Go to Main Page</Link>
+                </Button>
             </div>
         </>
     )

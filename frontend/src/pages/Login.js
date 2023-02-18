@@ -3,7 +3,6 @@ import background from "../images/login_background.jpg";
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
 import isEmail from 'validator/lib/isEmail';
-import "./Login.css"
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import { paper } from '@mui/material/colors';
@@ -54,7 +53,7 @@ const Login = () => {
     return (
         <>
             <ThemeProvider theme={theme}>
-                <div className='login-container h-full w-screen' style={{ backgroundImage: `url(${background})` }} >
+                <div className='login-container h-full w-screen bg-top bg-no-repeat bg-cover' style={{ backgroundImage: `url(${background})` }} >
                     <div className='bg-[#032538] min-h-screen h-full w-full md:w-6/12 lg:w-5/12 px-12 py-14'>
                         <h1 className='text-[4.5rem] font-bold text-white max-w-md mx-auto md:mx-0'>
                             RIM

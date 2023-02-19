@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const bodyParser=require("body-parser");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const itemRouter = require("./routes/itemRoutes.js");
 const requestRouter = require("./routes/requestRoutes.js");
 const mongoose = require("mongoose");
@@ -16,6 +17,7 @@ mongoose
 	.catch((err) => {
 		console.log(err);
 	});
+app.use(cookieParser);
 app.use("/item", itemRouter);
 app.use("/request", requestRouter);
     

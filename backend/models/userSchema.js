@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 const userSchema= new mongoose.Schema({
     name: String,
     mobileNumber: Number,
     club: String,
-    outlookID:String
-})
+    userID: String,
+    password: String
+});
 module.exports=mongoose.model("User",userSchema);

@@ -13,12 +13,12 @@ module.exports.download = async (req,res) =>{
 
 module.exports.addItem = (req,res) => {
     const data= req.body;
-    data.ownedBy = req.user;
+    data.ownedBy = req.user?req.user:data.ownedBy;  // Change after authentication setup complete
     const item= {
         "name": data.name,
         "category": data.category,
         "ownedBy": data.ownedBy,
-        "heldBy": data.ownedBy,
+        "heldBy": data.heldBy? data.heldBy:data.ownedBy,
         "quantity": data.quantity,
         "purchasedOn": data.purchasedOn,
         "bill": data.bill,

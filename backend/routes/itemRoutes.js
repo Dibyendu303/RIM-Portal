@@ -3,29 +3,17 @@ const express= require("express");
 const jwt = require('jsonwebtoken');
 const itemRouter = express.Router();
 const {download, addItem, listAllItems} = require("../controllers/item.js");
-
-const authenticateToken = (req, res, next)=>{
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if(token == null) return res.sendStatus(401);
-    else {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user)=>{
-        if(err) return res.sendStatus(403);
-        req.user = user;
-        next();
-        });
-    }
-}
+const authenticateToken = require('../middleware/authToken.js');
 
 //With authentication token
-// itemRouter.route("/")
-//     .post(authenticateToken, addItem)
-//     .get(authenticateToken, listAllItems);
+itemRouter.route("/")
+    .post(authenticateToken, addItem)
+    .get(authenticateToken, listAllItems);
 
 //Without token
-itemRouter.route("/")
-    .post(addItem)
-    .get(listAllItems);
+// itemRouter.route("/")
+//     .post(addItem)
+//     .get(listAllItems);
 itemRouter.get("/download", authenticateToken, download);
 module.exports = itemRouter;
 

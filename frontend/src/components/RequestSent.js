@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 // import Typography from '@mui/material/Typography';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
@@ -247,24 +247,16 @@ function Row(props) {
                                 <div>
                                     <span className='font-medium mr-4'>Time of Request : </span>
                                     <span> 3:04pm - 02/01/2023</span>
-
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>In Time : </span>
                                     <span> 3:04pm - 02/01/2023</span>
-
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>Out Time : </span>
                                     <span> 3:04pm - 02/01/2023</span>
-
                                 </div>
-                                <div class="p-2 flex">
-                                    <div class="w-1/2 mt-4 flex">
-                                        <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
-                                        <button type="submit" class="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
-                                    </div>
-                                </div>
+                                <button class="bg-transparent hover:bg-blue-500 text-blue-700 mt-6 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel Request</button>
                             </div>
                         </div>
                     </Collapse>
@@ -274,7 +266,7 @@ function Row(props) {
     );
 }
 
-export default function ModifiedTable2() {
+export default function RequestSent() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 

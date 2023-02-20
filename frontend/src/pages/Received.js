@@ -1,19 +1,19 @@
 import React from 'react'
 import Navbar from '../components/Navbar';
-import EnhancedTable from '../components/EnhancedTable';
 import Filter from '../components/filter/Filter.jsx'
+import RequestReceived from '../components/RequestReceived';
 
 
-const Home = () => {
+const Received = () => {
     return (
         <div className="bg-[#011018]">
             <Navbar />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <EnhancedTable></EnhancedTable>
+                <RequestReceived></RequestReceived>
             </div>
         </div>
     )
 }
 
-export default Home
+export default Received

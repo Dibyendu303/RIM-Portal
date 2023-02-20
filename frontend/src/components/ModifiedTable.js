@@ -239,11 +239,11 @@ function Row(props) {
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <div className="flex px-8 py-8 gap-16">
+                    <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
                             </div>
-                            <div className="flex flex-col gap-6 w-3/4 items-end">
+                            <div className="flex flex-col gap-2 w-3/4 items-end">
                                 <div>
                                     <span className='font-medium mr-4'>Time of Request : </span>
                                     <span> 3:04pm - 02/01/2023</span>
@@ -256,7 +256,7 @@ function Row(props) {
                                     <span className='font-medium mr-4'>Out Time : </span>
                                     <span> 3:04pm - 02/01/2023</span>
                                 </div>
-                                <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel Request</button>
+                                <button class="bg-transparent hover:bg-blue-500 text-blue-700 mt-6 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel Request</button>
                             </div>
                         </div>
                     </Collapse>
@@ -266,7 +266,7 @@ function Row(props) {
     );
 }
 
-export default function EnhancedTable() {
+export default function ModifiedTable() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 

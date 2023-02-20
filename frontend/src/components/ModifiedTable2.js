@@ -243,7 +243,7 @@ function Row(props) {
                             <div className='w-full'>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
                             </div>
-                            <div className="flex flex-col gap-6 w-3/4 items-end">
+                            <div className="flex flex-col gap-2 w-3/4 items-end">
                                 <div>
                                     <span className='font-medium mr-4'>Time of Request : </span>
                                     <span> 3:04pm - 02/01/2023</span>
@@ -260,7 +260,7 @@ function Row(props) {
 
                                 </div>
                                 <div class="p-2 flex">
-                                    <div class="w-1/2 flex">
+                                    <div class="w-1/2 mt-4 flex">
                                         <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
                                         <button type="submit" class="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
                                     </div>
@@ -274,7 +274,7 @@ function Row(props) {
     );
 }
 
-export default function EnhancedTable() {
+export default function ModifiedTable2() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 

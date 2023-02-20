@@ -20,14 +20,14 @@ const MenuProps = {
 };
 
 const names = [
-  'Club Name',
-  'Club Name',
-  'Club Name',
-  'Club Name',
-  'Club Name',
-  'Club Name',
-  'Club Name',
-  'Club Name',
+  'Coding Club',
+  'C&A',
+  'FEC',
+  'E-Cell',
+  'Robotics',
+  'Aeromodelling',
+  'IITG.Ai',
+  'Automobile',
 ];
 
 function ClubSelector() {

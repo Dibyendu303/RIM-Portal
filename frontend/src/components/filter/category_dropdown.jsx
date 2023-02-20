@@ -20,14 +20,10 @@ const MenuProps = {
 };
 
 const names = [
-  'Category Name',
-  'Category Name',
-  'Category Name',
-  'Category Name',
-  'Category Name',
-  'Category Name',
-  'Category Name',
-  'Category Name',
+  'Major Equipment',
+  'Furniture',
+  'Books',
+  'Consumables',
 ];
 
 function CategorySelector() {

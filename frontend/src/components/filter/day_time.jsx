@@ -31,9 +31,25 @@ function DayTimeSelector() {
                 onChange={handleChange}
                 renderInput={(params) => <TextField {...params} />}
             />
+        </Wrap>
+
+    </LocalizationProvider>
+  );
+}
+
+function DayTimeSelector2() {
+  const [value2, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Wrap>
             <DateTimePicker
-                label="To Date"
-                value={value}
+                label="From Date"
+                value={value2}
                 onChange={handleChange}
                 renderInput={(params) => <TextField {...params} />}
             />
@@ -62,7 +78,11 @@ export default function DayTime(){
   return(
     <div>
       <Heading>Purchased On</Heading>
-      <DayTimeSelector></DayTimeSelector>
+      <Wrap>
+        <DayTimeSelector></DayTimeSelector>
+        <DayTimeSelector2></DayTimeSelector2>
+      </Wrap>
+
     </div>
 
   )

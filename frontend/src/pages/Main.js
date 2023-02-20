@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar';
 import EnhancedTable from '../components/EnhancedTable';
-import Filter from '../components/filter/Filter.jsx'
+import Filter from '../components/filter/filter.jsx'
 
 
 const Main = () => {

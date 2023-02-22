@@ -5,6 +5,7 @@ import { TextField, Button } from '@mui/material';
 import isEmail from 'validator/lib/isEmail';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 // import { paper } from '@mui/material/colors';
 
 const theme = createTheme({
@@ -23,6 +24,7 @@ const theme = createTheme({
 
 
 const Login = () => {
+    const navigate = useNavigate();
     const [isValid, setIsValid] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -47,6 +49,7 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        navigate('/');
         console.log("Login API called")
     }
 

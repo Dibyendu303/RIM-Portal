@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -394,9 +394,7 @@ function Row(props) {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
-                                <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>
-                                    Request
-                                </Button>
+                                <Button variant="contained" className='w-24'>Request</Button>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
                                     <span> 3:04pm - 02/01/2023</span>
@@ -587,7 +585,6 @@ function Row(props) {
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
-
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';

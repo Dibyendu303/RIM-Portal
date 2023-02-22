@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -8,7 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-// import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -18,23 +17,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -236,6 +228,15 @@ function Row(props) {
     const [booked, setBooked] = useState({});
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
+    const [openDownload, setOpenDownload] = useState(false);
+
+    const handleClickDownload = () => {
+        setOpenDownload(true);
+    };
+
+    const handleCloseDownload = () => {
+        setOpenDownload(false);
+    };
 
 
     function roundMinutes(d) {
@@ -393,16 +394,14 @@ function Row(props) {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
-                                <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>
-                                    Request
-                                </Button>
+                                <Button variant="contained" className='w-24'>Request</Button>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
                                     <span> 3:04pm - 02/01/2023</span>
 
                                 </div>
                                 <div className="flex gap-4 text-blue-600 items-center cursor-pointer ">
-                                    <span className="text-blue-600 hover:underline">Download Content</span>
+                                    <span className="text-blue-600 hover:underline" onClick={handleClickDownload}>Download Content</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z" /></svg>
                                 </div>
                             </div>
@@ -515,6 +514,70 @@ function Row(props) {
                     }} disabled={errorRange}>Submit</Button>
                 </DialogActions>
             </Dialog>
+            <Dialog open={openDownload} onClose={handleCloseDownload}>
+                <DialogTitle className='bg-[#032538] text-white flex justify-between items-center'>
+                    <div className='text-2xl'>Downloads</div>
+                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin">x</span>
+                </DialogTitle>
+                <DialogContent>
+                    <div className='flex flex-col gap-4 p-4'>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Bill</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Sanction Letter</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Purchase order</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </React.Fragment>
     );
 }
@@ -522,7 +585,6 @@ function Row(props) {
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
-
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';

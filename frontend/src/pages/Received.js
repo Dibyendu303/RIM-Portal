@@ -7,7 +7,7 @@ import RequestReceived from '../components/RequestReceived';
 const Received = () => {
     return (
         <div className="bg-[#011018]">
-            <Navbar />
+            <Navbar textContent={"Requests - Received"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
                 <RequestReceived></RequestReceived>

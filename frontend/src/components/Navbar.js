@@ -16,12 +16,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { FaAngleDown } from "react-icons/fa";
 
-function Navbar() {
+function Navbar(props) {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [purchaseDate, setPurchaseDate] = React.useState(dayjs());
   const [ownedBy, setOwnedBy] = React.useState('');
   const [category, setCategory] = React.useState('');
+  const text = props.textContent;
 
   const handleOwnership = (event) => {
     setOwnedBy(event.target.value);
@@ -40,15 +42,15 @@ function Navbar() {
   return (
     <>
       <div className="flex items-center bg-[#032538] p-5 justify-between">
-        <div className="flex gap-10 items-center text-white/70">
-          <Link to="/" className="text-xl font-bold text-white">
+        <div className="flex gap-5 items-center text-white/70">
+          <Link to="/" className="text-xl px-4 font-bold text-white">
             RIM PORTAL
           </Link>
           <Link to="/" className="hover:text-white">
-            Home
+            <p className={`cursor-pointer px-4 py-2 ${text ? "" : "bg-white/20"}`}>Home</p>
           </Link>
           <div className="dropdown group text-white/70 hover:text-white">
-            <p className="cursor-pointer">Requests</p>
+            <p className={`cursor-pointer flex items-center justify-center gap-4 px-4 py-2 ${text ? " bg-white/20" : ""}`}>{text ? text : "Requests"} <FaAngleDown /></p>
 
             <div className="dropdown-content z-10 absolute bg-[#032538] hidden group-hover:block shadow-xl">
               <Link to="/sent" className="block px-4 py-3 text-white/70 hover:text-white hover:bg-[#217cb0]">

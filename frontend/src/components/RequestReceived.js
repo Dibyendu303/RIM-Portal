@@ -18,6 +18,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import tableData from '../data/Mock3.json';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -56,46 +57,21 @@ const theme = createTheme({
     }
 });
 
-function createData(name, calories, fat, carbs, protein) {
+function createData(name, category, requested, status, quantity, description, timeOfRequest, inTime, outTime) {
     return {
         name,
-        calories,
-        fat,
-        carbs,
-        protein,
+        category,
+        requested,
+        status,
+        quantity,
+        description,
+        timeOfRequest,
+        inTime,
+        outTime,
     };
 }
 
-const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
-// const rows = [
-//     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
-//     createData('Donut', "Donut", 25.0, 51, 4.9),
-//     createData('Eclair', "Eclair", 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 'Frozen yoghurt', 6.0, 24, 4.0),
-//     createData('Ice cream sandwich', 'Ice cream sandwich', 9.0, 37, 4.3),
-//     createData('Gingerbread', 'Gingerbread', 16.0, 49, 3.9),
-//     createData('Honeycomb', 'Honeycomb', 3.2, 87, 6.5),
-//     createData('Jelly Bean', 'Jelly Bean', 0.0, 94, 0.0),
-//     createData('KitKat', 'KitKat', 26.0, 65, 7.0),
-//     createData('Lollipop', 'Lollipop', 0.2, 98, 0.0),
-//     createData('Marshmallow', 'Marshmallow', 0, 81, 2.0),
-//     createData('Nougat', 'Nougat', 19.0, 9, 37.0),
-//     createData('Oreo', 'Oreo', 18.0, 63, 4.0),
-// ];
+const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['requested-by'], data.requestStatus, data.quantity, data.description, data.timeOfRequest, data.inTime, data.outTime));
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -137,28 +113,34 @@ const headCells = [
         label: 'Item name',
     },
     {
-        id: 'calories',
-        numeric: true,
+        id: 'category',
+        numeric: false,
         disablePadding: false,
         label: 'Category',
     },
     {
-        id: 'fat',
-        numeric: true,
+        id: 'requested',
+        numeric: false,
         disablePadding: false,
-        label: 'Owned By',
+        label: 'Requested By',
     },
     {
-        id: 'carbs',
-        numeric: true,
-        disablePadding: false,
-        label: 'Held By',
-    },
-    {
-        id: 'protein',
+        id: 'quantity',
         numeric: true,
         disablePadding: false,
         label: 'Quantity',
+    },
+    {
+        id: 'duration',
+        numeric: true,
+        disablePadding: false,
+        label: 'Duration',
+    },
+    {
+        id: 'status',
+        numeric: false,
+        disablePadding: false,
+        label: 'Request Status',
     },
 ];
 
@@ -222,10 +204,11 @@ function Row(props) {
                 >
                     {row.name}
                 </TableCell>
-                <TableCell align="center">{row.calories}</TableCell>
-                <TableCell align="center">{row.fat}</TableCell>
-                <TableCell align="center">{row.carbs}</TableCell>
-                <TableCell align="center">{row.protein}</TableCell>
+                <TableCell align="left">{row.category}</TableCell>
+                <TableCell align="left">{row.requested}</TableCell>
+                <TableCell align="center">{row.quantity}</TableCell>
+                <TableCell align="center">{row.quantity}</TableCell>
+                <TableCell align="left"><p className={`italic font-medium ${row.status === 'Pending' ? "text-gray-500" : (row.status === 'Approved' ? "text-green-500" : "text-red-500")}`}>{row.status}</p></TableCell>
                 <TableCell >
                     <IconButton
                         aria-label="expand row"
@@ -241,28 +224,35 @@ function Row(props) {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
+                                {row.description}
                             </div>
                             <div className="flex flex-col gap-2 w-3/4 items-end">
                                 <div>
                                     <span className='font-medium mr-4'>Time of Request : </span>
-                                    <span> 3:04pm - 02/01/2023</span>
+                                    <span> {row.timeOfRequest}</span>
 
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>In Time : </span>
-                                    <span> 3:04pm - 02/01/2023</span>
+                                    <span> {row.inTime}</span>
 
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>Out Time : </span>
-                                    <span> 3:04pm - 02/01/2023</span>
+                                    <span> {row.outTime}</span>
 
                                 </div>
                                 <div class="p-2 flex">
-                                    <div class="w-1/2 mt-4 flex">
-                                        <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
-                                        <button type="submit" class="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
+                                    <div class="mt-4 flex">
+                                        {row.status === 'Pending' ?
+                                            (<React.Fragment>
+                                                <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
+                                                <button type="submit" class="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
+                                            </React.Fragment>)
+                                            :
+                                            (row.status === 'Approved' ?
+                                                <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Force Decline</button> :
+                                                "")}
                                     </div>
                                 </div>
                             </div>

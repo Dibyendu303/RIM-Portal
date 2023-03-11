@@ -6,7 +6,7 @@ import Filter from '../components/filter/Filter.jsx'
 
 
 const Home = () => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(true);
     const navigate = useNavigate();
     if (!user) {
         console.log("User not found");

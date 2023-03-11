@@ -7,7 +7,7 @@ import RequestSent from '../components/RequestSent';
 const Sent = () => {
     return (
         <div className="bg-[#011018]">
-            <Navbar />
+            <Navbar textContent={"Requests - Sent"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
                 <RequestSent></RequestSent>

@@ -27,6 +27,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import tableData from '../data/Mock1.json';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -65,31 +66,35 @@ const theme = createTheme({
     }
 });
 
-function createData(name, calories, fat, carbs, protein) {
+function createData(name, category, owned, held, quantity, description, purchased) {
     return {
         name,
-        calories,
-        fat,
-        carbs,
-        protein,
+        category,
+        owned,
+        held,
+        quantity,
+        description,
+        purchased,
     };
 }
 
-const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
+const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['owned-by'], data['held-by'], data.quantity, data.description, data['purchased-on']));
+
+// const rows = [
+//     createData('Cupcake', 305, 3.7, 67, 4.3),
+//     createData('Donut', 452, 25.0, 51, 4.9),
+//     createData('Eclair', 262, 16.0, 24, 6.0),
+//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//     createData('Gingerbread', 356, 16.0, 49, 3.9),
+//     createData('Honeycomb', 408, 3.2, 87, 6.5),
+//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
+//     createData('KitKat', 518, 26.0, 65, 7.0),
+//     createData('Lollipop', 392, 0.2, 98, 0.0),
+//     createData('Marshmallow', 318, 0, 81, 2.0),
+//     createData('Nougat', 360, 19.0, 9, 37.0),
+//     createData('Oreo', 437, 18.0, 63, 4.0),
+// ];
 // const rows = [
 //     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
 //     createData('Donut', "Donut", 25.0, 51, 4.9),
@@ -146,25 +151,25 @@ const headCells = [
         label: 'Item name',
     },
     {
-        id: 'calories',
-        numeric: true,
+        id: 'category',
+        numeric: false,
         disablePadding: false,
         label: 'Category',
     },
     {
-        id: 'fat',
-        numeric: true,
+        id: 'owned',
+        numeric: false,
         disablePadding: false,
         label: 'Owned By',
     },
     {
-        id: 'carbs',
-        numeric: true,
+        id: 'held',
+        numeric: false,
         disablePadding: false,
         label: 'Held By',
     },
     {
-        id: 'protein',
+        id: 'quantity',
         numeric: true,
         disablePadding: false,
         label: 'Quantity',
@@ -219,12 +224,12 @@ EnhancedTableHead.propTypes = {
 function Row(props) {
     const { row, index } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
-    const [startDate, setStartDate] = React.useState(dayjs());
-    const [endDate, setEndDate] = React.useState(dayjs());
-    const [startTime, setStartTime] = React.useState(dayjs());
-    const [endTime, setEndTime] = React.useState(dayjs());
+    const [startDate, setStartDate] = useState(dayjs());
+    const [endDate, setEndDate] = useState(dayjs());
+    const [startTime, setStartTime] = useState(dayjs());
+    const [endTime, setEndTime] = useState(dayjs());
     const [booked, setBooked] = useState({});
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
@@ -372,10 +377,10 @@ function Row(props) {
                 >
                     {row.name}
                 </TableCell>
-                <TableCell align="center">{row.calories}</TableCell>
-                <TableCell align="center">{row.fat}</TableCell>
-                <TableCell align="center">{row.carbs}</TableCell>
-                <TableCell align="center">{row.protein}</TableCell>
+                <TableCell align="left">{row.category}</TableCell>
+                <TableCell align="left">{row.owned}</TableCell>
+                <TableCell align="left">{row.held}</TableCell>
+                <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell >
                     <IconButton
                         aria-label="expand row"
@@ -391,13 +396,13 @@ function Row(props) {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
+                                {row.description}
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
-                                <Button variant="contained" className='w-24'>Request</Button>
+                                <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> 3:04pm - 02/01/2023</span>
+                                    <span> {row.purchased}</span>
 
                                 </div>
                                 <div className="flex gap-4 text-blue-600 items-center cursor-pointer ">
@@ -583,8 +588,8 @@ function Row(props) {
 }
 
 export default function EnhancedTable() {
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('name');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';

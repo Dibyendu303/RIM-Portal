@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -8,7 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-// import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -18,23 +17,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import tableData from '../data/Mock1.json';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -73,31 +66,35 @@ const theme = createTheme({
     }
 });
 
-function createData(name, calories, fat, carbs, protein) {
+function createData(name, category, owned, held, quantity, description, purchased) {
     return {
         name,
-        calories,
-        fat,
-        carbs,
-        protein,
+        category,
+        owned,
+        held,
+        quantity,
+        description,
+        purchased,
     };
 }
 
-const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
+const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['owned-by'], data['held-by'], data.quantity, data.description, data['purchased-on']));
+
+// const rows = [
+//     createData('Cupcake', 305, 3.7, 67, 4.3),
+//     createData('Donut', 452, 25.0, 51, 4.9),
+//     createData('Eclair', 262, 16.0, 24, 6.0),
+//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//     createData('Gingerbread', 356, 16.0, 49, 3.9),
+//     createData('Honeycomb', 408, 3.2, 87, 6.5),
+//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
+//     createData('KitKat', 518, 26.0, 65, 7.0),
+//     createData('Lollipop', 392, 0.2, 98, 0.0),
+//     createData('Marshmallow', 318, 0, 81, 2.0),
+//     createData('Nougat', 360, 19.0, 9, 37.0),
+//     createData('Oreo', 437, 18.0, 63, 4.0),
+// ];
 // const rows = [
 //     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
 //     createData('Donut', "Donut", 25.0, 51, 4.9),
@@ -154,25 +151,25 @@ const headCells = [
         label: 'Item name',
     },
     {
-        id: 'calories',
-        numeric: true,
+        id: 'category',
+        numeric: false,
         disablePadding: false,
         label: 'Category',
     },
     {
-        id: 'fat',
-        numeric: true,
+        id: 'owned',
+        numeric: false,
         disablePadding: false,
         label: 'Owned By',
     },
     {
-        id: 'carbs',
-        numeric: true,
+        id: 'held',
+        numeric: false,
         disablePadding: false,
         label: 'Held By',
     },
     {
-        id: 'protein',
+        id: 'quantity',
         numeric: true,
         disablePadding: false,
         label: 'Quantity',
@@ -227,15 +224,24 @@ EnhancedTableHead.propTypes = {
 function Row(props) {
     const { row, index } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
-    const [startDate, setStartDate] = React.useState(dayjs());
-    const [endDate, setEndDate] = React.useState(dayjs());
-    const [startTime, setStartTime] = React.useState(dayjs());
-    const [endTime, setEndTime] = React.useState(dayjs());
+    const [startDate, setStartDate] = useState(dayjs());
+    const [endDate, setEndDate] = useState(dayjs());
+    const [startTime, setStartTime] = useState(dayjs());
+    const [endTime, setEndTime] = useState(dayjs());
     const [booked, setBooked] = useState({});
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
+    const [openDownload, setOpenDownload] = useState(false);
+
+    const handleClickDownload = () => {
+        setOpenDownload(true);
+    };
+
+    const handleCloseDownload = () => {
+        setOpenDownload(false);
+    };
 
 
     function roundMinutes(d) {
@@ -371,10 +377,10 @@ function Row(props) {
                 >
                     {row.name}
                 </TableCell>
-                <TableCell align="center">{row.calories}</TableCell>
-                <TableCell align="center">{row.fat}</TableCell>
-                <TableCell align="center">{row.carbs}</TableCell>
-                <TableCell align="center">{row.protein}</TableCell>
+                <TableCell align="left">{row.category}</TableCell>
+                <TableCell align="left">{row.owned}</TableCell>
+                <TableCell align="left">{row.held}</TableCell>
+                <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell >
                     <IconButton
                         aria-label="expand row"
@@ -390,19 +396,17 @@ function Row(props) {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.
+                                {row.description}
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
-                                <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>
-                                    Request
-                                </Button>
+                                <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> 3:04pm - 02/01/2023</span>
+                                    <span> {row.purchased}</span>
 
                                 </div>
                                 <div className="flex gap-4 text-blue-600 items-center cursor-pointer ">
-                                    <span className="text-blue-600 hover:underline">Download Content</span>
+                                    <span className="text-blue-600 hover:underline" onClick={handleClickDownload}>Download Content</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z" /></svg>
                                 </div>
                             </div>
@@ -515,14 +519,77 @@ function Row(props) {
                     }} disabled={errorRange}>Submit</Button>
                 </DialogActions>
             </Dialog>
+            <Dialog open={openDownload} onClose={handleCloseDownload}>
+                <DialogTitle className='bg-[#032538] text-white flex justify-between items-center'>
+                    <div className='text-2xl'>Downloads</div>
+                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin">x</span>
+                </DialogTitle>
+                <DialogContent>
+                    <div className='flex flex-col gap-4 p-4'>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Bill</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Sanction Letter</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Purchase order</p>
+                            <div className='flex gap-4'>
+                                <Button variant="outlined" onClick={handleCloseDownload} style={{
+                                    // backgroundColor: "#021018",
+                                    color: "#021018",
+                                    border: "1px solid #021018",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>View</Button>
+                                <Button variant="contained" onClick={handleCloseDownload} style={{
+                                    backgroundColor: "#021018",
+                                    color: "white",
+                                    padding: "0.5rem 2rem",
+                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                }}>Download</Button>
+                            </div>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </React.Fragment>
     );
 }
 
 export default function EnhancedTable() {
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
-
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('name');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';

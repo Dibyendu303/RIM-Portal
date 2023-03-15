@@ -5,7 +5,9 @@ const User = require("../models/userSchema.js");
 module.exports.getSentRequests= async(req, res)=>{
     try{
         // const user = await User.findOne({userID: req.user.userID});
-        const allRequests= await Request.find({requestedBy: req.user.club});
+        // const allRequests= await Request.find({requestedBy: req.user.club});
+        
+        const allRequests= await Request.find({requestedBy: req.body.ownedBy});
         res.json(allRequests);
     }
     catch(err){
@@ -16,7 +18,8 @@ module.exports.getSentRequests= async(req, res)=>{
 module.exports.getReceivedRequests= async(req, res)=>{
     try{
         // const user = await User.findOne({userID: req.user.userID});
-        const allRequests= await Request.find({ownedBy: req.user.club});
+        // const allRequests= await Request.find({ownedBy: req.user.club});
+        const allRequests= await Request.find({requestedBy: req.body.requestedBy});
         res.json(allRequests);
     }
     catch(err){
@@ -30,13 +33,15 @@ module.exports.acceptRequest= async(req,res)=>{
         // const user = await User.findOne({userID: req.user.userID});
         const targetRequest=await Request.findOneAndUpdate(
             {_id:req.body.requestId},
-            {requestStatus:`Accepted by ${req.user.club}`}
+            // {requestStatus:`Accepted by ${req.user.club}`}
+            
+            {requestStatus:`Accepted`}
         );
         newTime = targetRequest.requestTime;
         // newTime = {Start : "2016-05-18T16:00:00Z", End: "2016-05-18T16:00:00Z"}  //Example
         const item= await Item.findOneAndUpdate(
             {_id:targetRequest.itemId},
-            {"heldBy":targetRequest.requestedBy,"status":"Unavailable", $push: {"occupiedTime": newTime}}
+            {"heldBy":targetRequest.requestedBy,"status":"bcd", $push: {"occupiedTime": newTime}}
         );
         res.json({
             item: item,
@@ -54,8 +59,10 @@ module.exports.rejectRequest= async(req,res)=>{
         // const user = await User.findOne({userID: req.user.userID});
         const targetRequest=await Request.findOneAndUpdate(
             {_id:req.body.requestId},
-            {requestStatus:`Rejected by ${req.user.club}`}
+            // {requestStatus:`Rejected by ${req.user.club}`}
+            {requestStatus:`Rejected`}
         );
+        res.json(targetRequest);
     }
     catch (err){
         res.send(err);
@@ -64,7 +71,7 @@ module.exports.rejectRequest= async(req,res)=>{
 }
 module.exports.newRequest = (req,res)=>{
     const request = req.body;
-    request.requestedBy = req.user.club;
+    // request.requestedBy = req.user.club;
     const newRequest= new Request(request);
     try{
         newRequest.save();

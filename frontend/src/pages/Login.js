@@ -3,6 +3,7 @@ import background from "../images/login_background.jpg";
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
 import isEmail from 'validator/lib/isEmail';
+import axios from 'axios';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import { paper } from '@mui/material/colors';
@@ -47,7 +48,14 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Login API called")
+        console.log("Login API called");
+        const credentials= {userID: email, password: password};
+        axios.post("http://localhost:4000/login", credentials).then((res)=>{
+            console.log(res);
+            if(res.data.result=="Invalid"){
+                console.log("Invalid Credentials");
+            }
+        });
     }
 
     return (

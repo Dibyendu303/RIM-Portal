@@ -29,6 +29,7 @@ export default function Modal() {
     const [category, setCategory] = React.useState('');
     const [booked, setBooked] = useState({});
     const [errorRange, setErrorRange] = useState(false);
+    const [invalidDate, setInvalidDate] = useState(false);
 
     const handleOwnership = (event) => {
         setOwnedBy(event.target.value);
@@ -101,6 +102,11 @@ export default function Modal() {
                 flag = true;
             }
         }))
+
+        if (startRange > endRange)
+            setInvalidDate(true);
+        else
+            setInvalidDate(false);
         return flag;
     }
 
@@ -255,6 +261,7 @@ export default function Modal() {
                                 />
                             </div>
                             {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Enter valid date range</p>}
+                            {invalidDate && <p className={` text-[#d32f2f] font-normal text-sm`}>Start date must be smaller than end date</p>}
                         </div>
                     </LocalizationProvider>
                     <div className='mt-6 flex flex-col gap-8'>

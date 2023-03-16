@@ -1,27 +1,25 @@
-import React from 'react'
-import { Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import EnhancedTable from '../components/EnhancedTable';
+import Filter from '../components/filter/Filter.jsx'
+
+
 const Home = () => {
+    const [user, setUser] = useState(true);
+    const navigate = useNavigate();
+    if (!user) {
+        console.log("User not found");
+        navigate('/login');
+    }
     return (
-        <>
+        <div className="bg-[#011018]">
             <Navbar />
-            <div className='h-screen flex flex-col justify-center items-center border gap-12'>
-                <h2 className='font-bold text-[5rem]'>Home Page</h2>
-                <Button variant="contained">
-                    <Link to="/login">Go to Login</Link>
-                </Button>
-                <Button variant="contained">
-                    <Link to="/modal">Go to Modal page</Link>
-                </Button>
-                <Button variant="contained">
-                    <Link to="/table">Go to Table</Link>
-                </Button>
-                <Button variant="contained">
-                    <Link to="/main">Go to Main Page</Link>
-                </Button>
+            <div className='min-h-screen flex flex-row gap-4 p-4'>
+                <Filter></Filter>
+                <EnhancedTable></EnhancedTable>
             </div>
-        </>
+        </div>
     )
 }
 

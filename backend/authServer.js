@@ -43,13 +43,13 @@ app.post('/login', async (req, res)=>{
     const user = await User.findOne({userID: userID});
     const user1 = user?{userID: user.userID, club: user.club}:null;
     if(user==null){
-        return res.status(400).send("Invalid Credentials");
+        return res.status(400).json({result: "Invalid"});
     }
     try{
         if(await bcrypt.compare(req.body.password, user.password)){
-            console.log("Successfully logged in")
+            console.log("Successfully logged in");
         } else{
-            return res.status(400).send("Invalid Credentials")
+            return res.status(400).json({result: "Invalid"});
         }
     }
     catch(err){
@@ -57,7 +57,7 @@ app.post('/login', async (req, res)=>{
     }
     const accessToken = jwt.sign(user1, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
     res.cookie('jwt', accessToken, {httpOnly: true});
-    res.status(200).json({user: user._id});
+    res.status(200).json({result:"Success", user: user._id});
 });
 
 app.get('logout', (req, res)=>{

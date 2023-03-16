@@ -1,0 +1,126 @@
+{
+	"sampleData": {
+		"sample": [
+			{
+				"id": "1",
+				"item-name": "HP Monitor",
+				"category": "Major Equipment",
+				"owned-by": "Coding club",
+				"held-by": "Electronics club",
+				"quantity": "3",
+				"description": "HP Monitor Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "2",
+				"item-name": "Router",
+				"category": "Minor Equipment",
+				"owned-by": "Robotics Club",
+				"held-by": "Automobile club",
+				"quantity": "1",
+				"description": "Router Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "3",
+				"item-name": "Benq Monitor",
+				"category": "Major Eqipment",
+				"owned-by": "4i Labs",
+				"held-by": "Montage",
+				"quantity": "1",
+				"description": "Benq Monitor Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "4",
+				"item-name": "HC Verma",
+				"category": "Book",
+				"owned-by": "Finance club",
+				"held-by": "CnA club",
+				"quantity": "2",
+				"description": "HC Verma Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "5",
+				"item-name": "Chairs",
+				"category": "Furniture",
+				"owned-by": "Coding club",
+				"held-by": "E-cell",
+				"quantity": "3",
+				"description": "Chairs Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "6",
+				"item-name": "Table",
+				"category": "Furniture",
+				"owned-by": "Electronics club",
+				"held-by": "Coding club",
+				"quantity": "1",
+				"description": "Table Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "7",
+				"item-name": "HP Monitor",
+				"category": "Major Equipment",
+				"owned-by": "Coding club",
+				"held-by": "Electronics club",
+				"quantity": "3",
+				"description": "HP Monitor Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "8",
+				"item-name": "Router",
+				"category": "Minor Equipment",
+				"owned-by": "Robotics Club",
+				"held-by": "Automobile club",
+				"quantity": "1",
+				"description": "Router Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "9",
+				"item-name": "Benq Monitor",
+				"category": "Major Eqipment",
+				"owned-by": "4i Labs",
+				"held-by": "Montage",
+				"quantity": "1",
+				"description": "Benq Monitor Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "10",
+				"item-name": "HC Verma",
+				"category": "Book",
+				"owned-by": "Finance club",
+				"held-by": "CnA club",
+				"quantity": "2",
+				"description": "HC Verma Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "11",
+				"item-name": "Chairs",
+				"category": "Furniture",
+				"owned-by": "Coding club",
+				"held-by": "E-cell",
+				"quantity": "3",
+				"description": "Chairs Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			},
+			{
+				"id": "12",
+				"item-name": "Table",
+				"category": "Furniture",
+				"owned-by": "Electronics club",
+				"held-by": "Coding club",
+				"quantity": "1",
+				"description": "Table Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus purus eu nulla hendrerit sodales. Donec non libero enim. Nunc egestas neque a fermentum volutpat.",
+				"purchased-on": "3:04pm - 02/01/2023"
+			}
+		]
+	}
+}

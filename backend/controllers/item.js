@@ -41,6 +41,7 @@ module.exports.addItem = (req,res) => {
 
 module.exports.listAllItems =async(req,res)=>{
     try{
+        console.log("helloo")
         const items= await Item.find();
         res.status(201).json(items);
     }

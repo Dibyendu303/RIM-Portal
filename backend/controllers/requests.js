@@ -64,7 +64,7 @@ module.exports.rejectRequest= async(req,res)=>{
 }
 module.exports.newRequest = (req,res)=>{
     const request = req.body;
-    request.requestedBy = req.user.club;
+    // request.requestedBy = req.user.club;
     const newRequest= new Request(request);
     try{
         newRequest.save();

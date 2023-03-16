@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cors=require("cors");
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions)) 
 // const cookieParser = require("cookie-parser");
 const itemRouter = require("./routes/itemRoutes.js");
 const requestRouter = require("./routes/requestRoutes.js");
@@ -12,7 +20,7 @@ mongoose
 	.connect(URI) 
 	.then((result) => {
 		console.log("connected");
-		app.listen(3000);
+		app.listen(8080);
 	})
 	.catch((err) => {
 		console.log(err);

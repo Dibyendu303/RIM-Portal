@@ -31,7 +31,7 @@ module.exports.addItem = (req,res) => {
     const newItem= new Item(item);
     try{
         newItem.save()
-        res.status(201).send(newItem); // Can be removed
+        res.status(201).send({result:"Success", item: newItem}); // Can be removed
     }
     catch(err){
         res.status(500).send(err);
@@ -49,3 +49,19 @@ module.exports.listAllItems =async(req,res)=>{
         console.log(err);
     }
 }
+
+module.exports.deleteItem = async (req,res)=>{
+    const id=req.body.ID;
+
+    try{
+        Item.findByIdAndDelete(id);
+    }
+    catch{
+        res.send(err);
+        console.log(err);
+    }
+}
+
+// module.exports.returnItem = async (req,res)=>{
+     
+// }

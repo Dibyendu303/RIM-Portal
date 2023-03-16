@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import EnhancedTable from '../components/EnhancedTable';
@@ -6,6 +6,14 @@ import Filter from '../components/filter/Filter.jsx'
 
 
 const Home = () => {
+    const fetchData=async()=>{
+        const fetchResponse = await fetch(`http://localhost:8080/item`);
+        const data=await fetchResponse.json();
+        console.log(data);
+    }
+    useEffect(()=>{
+        fetchData();
+    },[])
     const [user, setUser] = useState(true);
     const navigate = useNavigate();
     if (!user) {

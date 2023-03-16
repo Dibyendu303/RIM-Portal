@@ -48,18 +48,36 @@ const Login = () => {
         setPassword(val);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         
         console.log("Login API called");
-        // const credentials= {userID: email, password: password};
-        // axios.post("http://localhost:4000/login", credentials).then((res)=>{
-        //     console.log(res);
-        //     if(res.data.result=="Invalid"){
-        //         console.log("Invalid Credentials");
+        const credentials= {userID: email, password: password};
+        // const settings = {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body:
+        //         {
+        //             "userID": email,
+        //             "password": password
+        //         }
         //     }
-        // });
-        navigate('/');
+
+        //     const fetchResponse = await fetch(`http://localhost:4000/login`, settings);
+        // const data = await fetchResponse.json();
+        // console.log(data)
+        console.log(credentials)
+        axios.post("http://localhost:4000/login", credentials).then((res)=>{
+            console.log(res);
+
+            if(res.data.result=="Invalid"){
+                console.log("Invalid Credentials");
+            }
+        });
+        // navigate('/');
     }
 
     return (

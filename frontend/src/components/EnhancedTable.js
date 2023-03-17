@@ -30,7 +30,6 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { IoClose } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
 import { FaTrashAlt } from "react-icons/fa";
-import tableData from '../data/Mock1.json';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -68,51 +67,6 @@ const theme = createTheme({
         }
     }
 });
-
-function createData(name, category, owned, held, quantity, description, purchased) {
-    return {
-        name,
-        category,
-        owned,
-        held,
-        quantity,
-        description,
-        purchased,
-    };
-}
-
-const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['owned-by'], data['held-by'], data.quantity, data.description, data['purchased-on']));
-
-// const rows = [
-//     createData('Cupcake', 305, 3.7, 67, 4.3),
-//     createData('Donut', 452, 25.0, 51, 4.9),
-//     createData('Eclair', 262, 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//     createData('Gingerbread', 356, 16.0, 49, 3.9),
-//     createData('Honeycomb', 408, 3.2, 87, 6.5),
-//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//     createData('KitKat', 518, 26.0, 65, 7.0),
-//     createData('Lollipop', 392, 0.2, 98, 0.0),
-//     createData('Marshmallow', 318, 0, 81, 2.0),
-//     createData('Nougat', 360, 19.0, 9, 37.0),
-//     createData('Oreo', 437, 18.0, 63, 4.0),
-// ];
-// const rows = [
-//     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
-//     createData('Donut', "Donut", 25.0, 51, 4.9),
-//     createData('Eclair', "Eclair", 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 'Frozen yoghurt', 6.0, 24, 4.0),
-//     createData('Ice cream sandwich', 'Ice cream sandwich', 9.0, 37, 4.3),
-//     createData('Gingerbread', 'Gingerbread', 16.0, 49, 3.9),
-//     createData('Honeycomb', 'Honeycomb', 3.2, 87, 6.5),
-//     createData('Jelly Bean', 'Jelly Bean', 0.0, 94, 0.0),
-//     createData('KitKat', 'KitKat', 26.0, 65, 7.0),
-//     createData('Lollipop', 'Lollipop', 0.2, 98, 0.0),
-//     createData('Marshmallow', 'Marshmallow', 0, 81, 2.0),
-//     createData('Nougat', 'Nougat', 19.0, 9, 37.0),
-//     createData('Oreo', 'Oreo', 18.0, 63, 4.0),
-// ];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -160,13 +114,13 @@ const headCells = [
         label: 'Category',
     },
     {
-        id: 'owned',
+        id: 'ownedBy',
         numeric: false,
         disablePadding: false,
         label: 'Owned By',
     },
     {
-        id: 'held',
+        id: 'heldBy',
         numeric: false,
         disablePadding: false,
         label: 'Held By',
@@ -387,8 +341,8 @@ function Row(props) {
                     {row.name}
                 </TableCell>
                 <TableCell align="left">{row.category}</TableCell>
-                <TableCell align="left">{row.owned}</TableCell>
-                <TableCell align="left">{row.held}</TableCell>
+                <TableCell align="left">{row.ownedBy}</TableCell>
+                <TableCell align="left">{row.heldBy}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell >
                     <IconButton
@@ -405,7 +359,11 @@ function Row(props) {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full flex flex-col justify-between'>
-                                <div>{row.description}</div>
+                                <div>{row.description || <span className='italic'>No description provided</span>}</div>
+                                <div>
+                                    <span className='font-medium mr-4'>Remarks : </span>
+                                    <span> {row.remarks || <span className='italic'>No remarks</span>}</span>
+                                </div>
                                 <div>
                                     <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={handleRemoveItem}>Remove item <FaTrashAlt /></div>
                                 </div>
@@ -414,8 +372,7 @@ function Row(props) {
                                 <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> {row.purchased}</span>
-
+                                    <span> {row.purchasedOn}</span>
                                 </div>
                                 <div className="cursor-pointer text-blue-600 hover:underline flex justify-center items-center gap-2" onClick={handleClickDownload}>Download Content <FiDownload /></div>
                             </div>
@@ -596,7 +553,8 @@ function Row(props) {
     );
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
+    // console.log(props.data);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
 
@@ -620,10 +578,10 @@ export default function EnhancedTable() {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
+                                rowCount={props.data.length}
                             />
                             <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
+                                {stableSort(props.data, getComparator(order, orderBy))
                                     .map((row, index) =>
                                         <Row key={index} row={row} index={index} />
                                     )}

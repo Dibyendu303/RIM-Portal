@@ -251,7 +251,10 @@ function Row(props) {
                                             </React.Fragment>)
                                             :
                                             (row.status === 'Approved' ?
-                                                <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Force Decline</button> :
+                                                (<React.Fragment>
+                                                    <button type="submit" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Item Returned</button>
+                                                    <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Force Decline</button>
+                                                </React.Fragment>) :
                                                 "")}
                                     </div>
                                 </div>

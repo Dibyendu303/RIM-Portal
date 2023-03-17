@@ -27,6 +27,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { IoClose } from "react-icons/io5";
+import { FiDownload } from "react-icons/fi";
+import { FaTrashAlt } from "react-icons/fa";
 import tableData from '../data/Mock1.json';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -352,7 +355,13 @@ function Row(props) {
         return false;
     };
 
-
+    const handleRemoveItem = () => {
+        if (window.confirm("Are you sure want to remove this item") === true) {
+            console.log("API call to remove item");
+        } else {
+            console.log("Remove item request cancelled");
+        }
+    }
 
     useEffect(() => {
         const flag = isValidRange();
@@ -395,8 +404,11 @@ function Row(props) {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
-                            <div className='w-full'>
-                                {row.description}
+                            <div className='w-full flex flex-col justify-between'>
+                                <div>{row.description}</div>
+                                <div>
+                                    <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={handleRemoveItem}>Remove item <FaTrashAlt /></div>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
                                 <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
@@ -405,10 +417,7 @@ function Row(props) {
                                     <span> {row.purchased}</span>
 
                                 </div>
-                                <div className="flex gap-4 text-blue-600 items-center cursor-pointer ">
-                                    <span className="text-blue-600 hover:underline" onClick={handleClickDownload}>Download Content</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z" /></svg>
-                                </div>
+                                <div className="cursor-pointer text-blue-600 hover:underline flex justify-center items-center gap-2" onClick={handleClickDownload}>Download Content <FiDownload /></div>
                             </div>
                         </div>
                     </Collapse>
@@ -522,7 +531,7 @@ function Row(props) {
             <Dialog open={openDownload} onClose={handleCloseDownload}>
                 <DialogTitle className='bg-[#032538] text-white flex justify-between items-center'>
                     <div className='text-2xl'>Downloads</div>
-                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin">x</span>
+                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin"><IoClose /></span>
                 </DialogTitle>
                 <DialogContent>
                     <div className='flex flex-col gap-4 p-4'>

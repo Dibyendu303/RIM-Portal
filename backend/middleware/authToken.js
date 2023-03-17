@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const authenticateToken = (req, res, next)=>{
-    const token= req.cookies.jwt;
+    const token= req.body.jwt;
     if(token == null) return res.redirect('/login');
     else {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user)=>{

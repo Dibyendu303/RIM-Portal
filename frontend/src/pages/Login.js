@@ -3,6 +3,7 @@ import background from "../images/login_background.jpg";
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
 import isEmail from 'validator/lib/isEmail';
+import axios from 'axios';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -47,10 +48,36 @@ const Login = () => {
         setPassword(val);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        navigate('/');
-        console.log("Login API called")
+        
+        console.log("Login API called");
+        const credentials= {userID: email, password: password};
+        // const settings = {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body:
+        //         {
+        //             "userID": email,
+        //             "password": password
+        //         }
+        //     }
+
+        //     const fetchResponse = await fetch(`http://localhost:4000/login`, settings);
+        // const data = await fetchResponse.json();
+        // console.log(data)
+        console.log(credentials)
+        axios.post("http://localhost:4000/login", credentials).then((res)=>{
+            console.log(res);
+
+            if(res.data.result=="Invalid"){
+                console.log("Invalid Credentials");
+            }
+        });
+        // navigate('/');
     }
 
     return (

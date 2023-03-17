@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -616,7 +616,7 @@ export default function EnhancedTable() {
                             <TableBody>
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={row.name} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} />
                                     )}
                             </TableBody>
                         </Table>

@@ -271,7 +271,7 @@ export default function RequestSent() {
                             <TableBody>
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={row.name} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} />
                                     )}
                             </TableBody>
                         </Table>

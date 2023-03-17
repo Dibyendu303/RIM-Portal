@@ -6,10 +6,11 @@ import Filter from '../components/filter/Filter.jsx'
 
 
 const Home = () => {
+    const [data, setData] = useState([]);
     const fetchData = async () => {
         const fetchResponse = await fetch(`http://localhost:8080/item`);
         const data = await fetchResponse.json();
-        console.log(data);
+        setData(data);
     }
     useEffect(() => {
         fetchData();
@@ -25,7 +26,7 @@ const Home = () => {
             <Navbar />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <EnhancedTable></EnhancedTable>
+                <EnhancedTable data={data}></EnhancedTable>
             </div>
         </div>
     )

@@ -46,7 +46,7 @@ function Navbar(props) {
   };
 
   const handleSubmit = async () => {
-    const credentials = {
+    const options = {
       "name": itemName,
       "category": category,
       "ownedBy": ownedBy,
@@ -59,14 +59,9 @@ function Navbar(props) {
       "remarks": remarks,
       "occupiedTime": []
     };
-    console.log(credentials);
+    console.log(options);
     try {
-      // const response = await fetch(`http://localhost:8080/item`, options);
-      // const jsonData = await response.json();
-      // console.log(jsonData);
-      // const newData={...data, jsonData};
-      // setData({ ...data, jsonData.item });
-      axios.post("http://localhost:8080/item", credentials).then((res) => {
+      axios.post("http://localhost:8080/item", options).then((res) => {
         console.log(res.data);
         const newItem = res.data.item;
         setData({ ...data, newItem });
@@ -77,14 +72,6 @@ function Navbar(props) {
     catch (e) {
       alert('Unable to add item. Please try again later');
     }
-    // console.log(credentials)
-    // axios.post("http://localhost:4000/login", credentials).then((res) => {
-    //   console.log(res);
-
-    //   if (res.data.result == "Invalid") {
-    //     console.log("Invalid Credentials");
-    //   }
-    // });
   }
 
   return (

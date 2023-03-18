@@ -329,7 +329,17 @@ function Row(props) {
     const handleClickOpenRequest = () => {
         setOpenRequest(true);
     };
+    const handleViewBill = () => {
+        window.open(row.bill, "_blank", "noreferrer");
+    }
+    const handleViewSanctionLetter = () => {
+        window.open(row.sanctionLetter, "_blank", "noreferrer");
+    }
+    const handleViewPurchaseOrder = () => {
+        window.open(row.purchaseOrder, "_blank", "noreferrer");
+    }
 
+    const purchaseDate = new Date(parseInt(row.purchasedOn)).toLocaleString('en-IN');
     return (
         <React.Fragment>
             <TableRow style={index % 2 ? { background: "#A2D5F2" } : { background: "#FAFAFA" }}>
@@ -358,11 +368,15 @@ function Row(props) {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
-                            <div className='w-full flex flex-col justify-between'>
-                                <div>{row.description || <span className='italic'>No description provided</span>}</div>
+                            <div className='w-full flex flex-col gap-4 justify-between'>
+                                {/* <div>{row.description || <span className='italic'>No description provided</span>}</div> */}
                                 <div>
                                     <span className='font-medium mr-4'>Remarks : </span>
                                     <span> {row.remarks || <span className='italic'>No remarks</span>}</span>
+                                </div>
+                                <div>
+                                    <span className='font-medium mr-4'>Purchased On : </span>
+                                    <span> {purchaseDate}</span>
                                 </div>
                                 <div>
                                     <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={handleRemoveItem}>Remove item <FaTrashAlt /></div>
@@ -370,10 +384,6 @@ function Row(props) {
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
                                 <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
-                                <div>
-                                    <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> {row.purchasedOn}</span>
-                                </div>
                                 <div className="cursor-pointer text-blue-600 hover:underline flex justify-center items-center gap-2" onClick={handleClickDownload}>Download Content <FiDownload /></div>
                             </div>
                         </div>
@@ -495,55 +505,79 @@ function Row(props) {
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Bill</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.bill ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewBill} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewBill} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Bill Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Sanction Letter</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.sanctionLetter ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewSanctionLetter} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewSanctionLetter} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Sanction Letter Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Purchase order</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.purchaseOrder ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewPurchaseOrder} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewPurchaseOrder} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Purchase order Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                     </div>

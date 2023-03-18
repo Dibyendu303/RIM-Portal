@@ -4,13 +4,18 @@ import Navbar from '../components/Navbar';
 import EnhancedTable from '../components/EnhancedTable';
 import Filter from '../components/filter/Filter.jsx'
 
-
 const Home = () => {
     const [data, setData] = useState([]);
     const fetchData = async () => {
-        const fetchResponse = await fetch(`http://localhost:8080/item`);
-        const data = await fetchResponse.json();
-        setData(data);
+        try {
+            const fetchResponse = await fetch(`http://localhost:8080/item`);
+            const data = await fetchResponse.json();
+            setData(data);
+            console.log(data);
+        }
+        catch (e) {
+            alert("Internal server error. Please try again later");
+        }
     }
     useEffect(() => {
         fetchData();
@@ -23,7 +28,7 @@ const Home = () => {
     }
     return (
         <div className="bg-[#011018]">
-            <Navbar />
+            <Navbar data={data} setData={setData} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
                 <EnhancedTable data={data}></EnhancedTable>

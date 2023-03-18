@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import background from "../images/login_background.jpg";
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
@@ -30,6 +30,30 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [dirty, setDirty] = useState(false);
+    const [user, setUser] = useState(null);
+
+    const validateToken = async (token) => {
+        try {
+            const credentials = { jwt: token };
+            axios.post("http://localhost:4000/checkToken", credentials)
+                .then((res) => {
+                    setUser(res.data.user);
+                    navigate('/');
+                }).catch((e) => {
+                });
+        }
+        catch (e) {
+            alert('Internal server error. Please try again later.');
+        }
+    }
+
+    useEffect(() => {
+        const token = JSON.parse(localStorage.getItem('rim-jwt'));
+        if (token) {
+            validateToken(token);
+        }
+    }, []);
+
 
     const handleEmailChange = (e) => {
         const val = e.target.value;
@@ -48,36 +72,22 @@ const Login = () => {
         setPassword(val);
     }
 
-    const handleSubmit = async(e) => {
-        e.preventDefault();
-        
-        console.log("Login API called");
-        const credentials= {userID: email, password: password};
-        // const settings = {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body:
-        //         {
-        //             "userID": email,
-        //             "password": password
-        //         }
-        //     }
-
-        //     const fetchResponse = await fetch(`http://localhost:4000/login`, settings);
-        // const data = await fetchResponse.json();
-        // console.log(data)
-        console.log(credentials)
-        axios.post("http://localhost:4000/login", credentials).then((res)=>{
-            console.log(res);
-
-            if(res.data.result=="Invalid"){
-                console.log("Invalid Credentials");
-            }
-        });
-        // navigate('/');
+    const handleSubmit = async (e) => {
+        try {
+            const credentials = { userID: email, password: password };
+            console.log(credentials);
+            axios.post("http://localhost:4000/login", credentials)
+                .then((res) => {
+                    localStorage.setItem('rim-jwt', JSON.stringify(res.data.jwt));
+                    alert('Successfully logged in');
+                    navigate('/');
+                }).catch((e) => {
+                    alert('Invalid username/password');
+                });
+        }
+        catch (e) {
+            alert('Internal server error. Please try again later.');
+        }
     }
 
     return (
@@ -97,13 +107,13 @@ const Login = () => {
                             autoComplete="off"
                             className='flex flex-col px-2 gap-8 py-12 max-w-md mx-auto md:mx-0 relative'
                         >
-                            <TextField error={dirty && !isValid} id="standard-basic" label="Enter email" variant="standard" value={email} onBlur={() => setDirty(true)} onChange={(e) => handleEmailChange(e)} InputLabelProps={{
+                            <TextField error={dirty && !isValid} id="email" label="Enter email" variant="standard" value={email} onBlur={() => setDirty(true)} onChange={(e) => handleEmailChange(e)} InputLabelProps={{
                                 style: {
                                     color: 'rgba(255, 255, 255, 0.6)',
                                 }
                             }} />
                             {dirty && !isValid && <p className={`absolute text-[#d32f2f] font-normal text-xs top-24 left-2`}>Enter valid email address</p>}
-                            <TextField id="standard-basic" label="Password" variant="standard" type="password" value={password} onChange={(e) => handlePasswordChange(e)} InputLabelProps={{
+                            <TextField id="password" label="Password" variant="standard" type="password" value={password} onChange={(e) => handlePasswordChange(e)} InputLabelProps={{
                                 style: {
                                     color: 'rgba(255, 255, 255, 0.6)'
                                 }

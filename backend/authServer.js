@@ -53,15 +53,15 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ userID: userID });
     const user1 = user ? { userID: user.userID, club: user.club } : null;
     if (user == null) {
-        console.log("User not found")
-        return res.status(400).json({ result: "Invalid" });
+        console.log("User not found");
+        return res.status(401).json({ result: "Invalid" });
     }
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
             console.log("Successfully logged in");
         } else {
             console.log("Wrong pw");
-            return res.status(400).json({ result: "Invalid" });
+            return res.status(401).json({ result: "Invalid" });
         }
     }
     catch (err) {
@@ -79,15 +79,20 @@ app.get('logout', (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });
     res.redirect('/login');
 })
-app.get('checkToken', (req, res) => {
-    const token = req.body.jwt;
-    if (token == null) return res.redirect('/login');
-    else {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) return res.status(400).send(err);
-            req.user = user;
-            req.status(200).send({ user: user });
-        });
+app.post('/checkToken', (req, res) => {
+    try {
+        const token = req.body.jwt;
+        if (token == null) return res.status(401).json({ result: "User not found" });
+        else {
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+                if (err) return res.status(401).send(err);
+                req.user = user;
+                return res.status(200).send({ user: user });
+            });
+        }
+    }
+    catch (err) {
+        return res.status(500).send(err);
     }
 });
 // app.listen(4000);

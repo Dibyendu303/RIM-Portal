@@ -55,6 +55,7 @@ module.exports.deleteItem = async (req,res)=>{
 
     try{
         Item.findByIdAndDelete(id);
+        res.status(200).send({ result: "Success"});
     }
     catch{
         res.send(err);

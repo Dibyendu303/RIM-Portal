@@ -51,13 +51,19 @@ module.exports.listAllItems =async(req,res)=>{
 }
 
 module.exports.deleteItem = async (req,res)=>{
-    const id=req.body.ID;
-
-    try{
-        Item.findByIdAndDelete(id);
-        res.status(200).send({ result: "Success"});
+    try {
+        const id=req.body.ID;
+        // console.log("Delete item api called ", id);
+        Item.findByIdAndRemove(id, (err, doc) => {
+            if (!err) {
+                res.status(200).send({ result: "Success" });
+            } else {
+                res.send(err);
+                console.log(err);
+            }
+        })
     }
-    catch{
+    catch {
         res.send(err);
         console.log(err);
     }

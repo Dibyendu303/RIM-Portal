@@ -7,7 +7,12 @@ import axios from 'axios';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-// import { paper } from '@mui/material/colors';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const theme = createTheme({
     palette: {
@@ -31,6 +36,32 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [dirty, setDirty] = useState(false);
     const [user, setUser] = useState(null);
+    const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+
+    const handleClickSuccessMsg = () => {
+        setOpenSuccessMsg(true);
+    };
+
+    const handleCloseSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
 
     const validateToken = async (token) => {
         try {
@@ -79,10 +110,12 @@ const Login = () => {
             axios.post("http://localhost:4000/login", credentials)
                 .then((res) => {
                     localStorage.setItem('rim-jwt', JSON.stringify(res.data.jwt));
-                    alert('Successfully logged in');
-                    navigate('/');
+                    handleClickSuccessMsg();
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 1000);
                 }).catch((e) => {
-                    alert('Invalid username/password');
+                    handleClickErrorMsg();
                 });
         }
         catch (e) {
@@ -93,6 +126,16 @@ const Login = () => {
     return (
         <>
             <ThemeProvider theme={theme}>
+                <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg}>
+                    <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                        Successfully logged in!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg}>
+                    <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                        Invalid email or Password!
+                    </Alert>
+                </Snackbar>
                 <div className='login-container h-full w-screen bg-top bg-no-repeat bg-cover' style={{ backgroundImage: `url(${background})` }} >
                     <div className='bg-[#032538] min-h-screen h-full w-full md:w-6/12 lg:w-5/12 px-12 py-14'>
                         <h1 className='text-[4.5rem] font-bold text-white max-w-md mx-auto md:mx-0'>

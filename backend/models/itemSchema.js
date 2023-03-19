@@ -1,12 +1,12 @@
-const mongoose= require("mongoose");
+const mongoose = require("mongoose");
 
-const itemSchema= new mongoose.Schema({
+const itemSchema = new mongoose.Schema({
     "name": String,
     "category": String,
     "ownedBy": String,
     "heldBy": String,
     "quantity": Number,
-    "purchasedOn": String,
+    "purchasedOn": Number,
     "bill": String,
     "sanctionLetter": String,
     "purchaseOrder": String,
@@ -14,10 +14,10 @@ const itemSchema= new mongoose.Schema({
     "remarks": String,
     "occupiedTime": [
         {
-            "Start": Date,
-            "End": Date
+            "Start": Number,
+            "End": Number
         }
     ]
 });
 
-module.exports=mongoose.model("Item", itemSchema);
+module.exports = mongoose.model("Item", itemSchema);

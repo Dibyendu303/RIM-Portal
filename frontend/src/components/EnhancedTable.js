@@ -30,6 +30,15 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { IoClose } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
 import { FaTrashAlt } from "react-icons/fa";
+import axios from 'axios';
+
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -179,7 +188,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function Row(props) {
-    const { row, index } = props;
+    const { row, index, data, setData } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
@@ -191,6 +200,34 @@ function Row(props) {
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
     const [openDownload, setOpenDownload] = useState(false);
+
+    const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+
+    const handleClickSuccessMsg = () => {
+        setOpenSuccessMsg(true);
+    };
+
+    const handleCloseSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
+
 
     const handleClickDownload = () => {
         setOpenDownload(true);
@@ -309,9 +346,34 @@ function Row(props) {
         return false;
     };
 
-    const handleRemoveItem = () => {
+    const handleRemoveItem = (id) => {
         if (window.confirm("Are you sure want to remove this item") === true) {
-            console.log("API call to remove item");
+            // console.log("API call to remove item");
+            try {
+                // const options = { "ID": id };
+                // console.log(options);
+
+                axios.delete("http://localhost:8080/item", {
+                    headers: {
+                        Authorization: "usertoken"
+                    },
+                    data: {
+                        "ID": id
+                    }
+                })
+                    .then((res) => {
+                        const newData = data.filter(el => el._id !== id);
+                        setData(newData);
+                        handleClickSuccessMsg();
+                    }).catch((e) => {
+                        handleClickErrorMsg();
+                        // alert('Unable to delete item. Please try again later');
+                    });
+            }
+            catch (e) {
+                alert('Internal server error. Please try again later.');
+            }
+            setOpen(false);
         } else {
             console.log("Remove item request cancelled");
         }
@@ -338,6 +400,9 @@ function Row(props) {
     const handleViewPurchaseOrder = () => {
         window.open(row.purchaseOrder, "_blank", "noreferrer");
     }
+
+    const vertical = 'top'
+    const horizontal = 'center';
 
     const purchaseDate = new Date(parseInt(row.purchasedOn)).toLocaleString('en-IN');
     return (
@@ -366,6 +431,16 @@ function Row(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Item deleted successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to delete item. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full flex flex-col gap-4 justify-between'>
@@ -379,7 +454,7 @@ function Row(props) {
                                     <span> {purchaseDate}</span>
                                 </div>
                                 <div>
-                                    <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={handleRemoveItem}>Remove item <FaTrashAlt /></div>
+                                    <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
@@ -588,7 +663,8 @@ function Row(props) {
 }
 
 export default function EnhancedTable(props) {
-    // console.log(props.data);
+    const { data, setData } = props;
+    // console.log(data);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
 
@@ -612,12 +688,12 @@ export default function EnhancedTable(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={props.data.length}
+                                rowCount={data.length}
                             />
                             <TableBody>
-                                {stableSort(props.data, getComparator(order, orderBy))
+                                {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} />
                                     )}
                             </TableBody>
                         </Table>

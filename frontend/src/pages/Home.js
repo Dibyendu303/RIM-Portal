@@ -81,7 +81,7 @@ const Home = () => {
             <Navbar data={data} setData={setData} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <EnhancedTable data={data}></EnhancedTable>
+                <EnhancedTable data={data} setData={setData}></EnhancedTable>
             </div>
         </div>
     )

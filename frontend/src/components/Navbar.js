@@ -18,6 +18,12 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { FaAngleDown } from "react-icons/fa";
 import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Navbar(props) {
   const { data, setData } = props;
@@ -29,6 +35,33 @@ function Navbar(props) {
   const [remarks, setRemarks] = useState('');
   const [quantity, setQuantity] = useState('');
   const text = props.textContent;
+
+  const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+  const [openErrorMsg, setOpenErrorMsg] = useState(false);
+
+  const handleClickSuccessMsg = () => {
+    setOpenSuccessMsg(true);
+  };
+
+  const handleCloseSuccessMsg = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSuccessMsg(false);
+  };
+
+  const handleClickErrorMsg = () => {
+    setOpenErrorMsg(true);
+  };
+
+  const handleCloseErrorMsg = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorMsg(false);
+  };
 
   const handleOwnership = (event) => {
     setOwnedBy(event.target.value);
@@ -64,18 +97,40 @@ function Navbar(props) {
       axios.post("http://localhost:8080/item", options).then((res) => {
         console.log(res.data);
         const newItem = res.data.item;
-        setData({ ...data, newItem });
+        const newData = [...data, newItem];
+        setData(newData);
         handleCloseAddModal();
-        alert('Item added successfully');
+        handleClickSuccessMsg();
+        // alert('Item added successfully');
+      }).catch((e) => {
+        handleCloseAddModal();
+        handleClickErrorMsg();
+        // alert('Unable to add item. Please try again later');
+
       });
     }
     catch (e) {
-      alert('Unable to add item. Please try again later');
+      handleCloseAddModal();
+      handleClickErrorMsg();
+      // alert('Unable to add item. Please try again later');
     }
   }
 
+  const vertical = 'top'
+  const horizontal = 'center';
+
   return (
     <>
+      <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+        <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+          Item added successfully!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+          Unable to add item. Please try again later!
+        </Alert>
+      </Snackbar>
       <div className="flex items-center bg-[#032538] p-5 justify-between">
         <div className="flex gap-5 items-center text-white/70">
           <Link to="/" className="text-xl px-4 font-bold text-white">

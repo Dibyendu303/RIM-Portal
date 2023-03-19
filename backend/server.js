@@ -22,7 +22,7 @@ mongoose
 	.connect(URI)
 	.then((result) => {
 		console.log("connected");
-		console.log(`Auth server listening on port ${port}`);
+		console.log(`Server listening on port ${port}`);
 		app.listen(port);
 	})
 	.catch((err) => {

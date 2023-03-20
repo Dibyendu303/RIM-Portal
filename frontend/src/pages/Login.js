@@ -105,6 +105,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         try {
+            handleCloseErrorMsg();
             const credentials = { userID: email, password: password };
             console.log(credentials);
             axios.post("http://localhost:4000/login", credentials)

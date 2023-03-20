@@ -6,8 +6,7 @@ module.exports.getSentRequests = async (req, res) => {
     try {
         // const user = await User.findOne({userID: req.user.userID});
         // const allRequests= await Request.find({requestedBy: req.user.club});
-
-        const allRequests = await Request.find({ requestedBy: req.body.user });
+        const allRequests = await Request.find({ requestedBy: req.query.user });
         res.json(allRequests);
     }
     catch (err) {
@@ -19,7 +18,7 @@ module.exports.getReceivedRequests = async (req, res) => {
     try {
         // const user = await User.findOne({userID: req.user.userID});
         // const allRequests= await Request.find({ownedBy: req.user.club});
-        const allRequests = await Request.find({ ownedBy: req.body.user });
+        const allRequests = await Request.find({ ownedBy: req.query.user });
         res.json(allRequests);
     }
     catch (err) {

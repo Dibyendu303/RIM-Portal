@@ -29,15 +29,27 @@ const theme = createTheme({
 });
 
 
-const Login = () => {
+const Login = (props) => {
     const navigate = useNavigate();
     const [isValid, setIsValid] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [dirty, setDirty] = useState(false);
-    const [user, setUser] = useState(null);
+    const { user, setUser } = props;
     const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
 
     const handleClickSuccessMsg = () => {
         setOpenSuccessMsg(true);
@@ -74,7 +86,7 @@ const Login = () => {
                 });
         }
         catch (e) {
-            alert('Internal server error. Please try again later.');
+            handleClickNetworkErrorMsg();
         }
     }
 
@@ -107,7 +119,7 @@ const Login = () => {
         try {
             handleCloseErrorMsg();
             const credentials = { userID: email, password: password };
-            console.log(credentials);
+            // console.log(credentials);
             axios.post("http://localhost:4000/login", credentials)
                 .then((res) => {
                     localStorage.setItem('rim-jwt', JSON.stringify(res.data.jwt));
@@ -124,6 +136,9 @@ const Login = () => {
         }
     }
 
+    const vertical = 'top'
+    const horizontal = 'center';
+
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -135,6 +150,11 @@ const Login = () => {
                 <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg}>
                     <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
                         Invalid email or Password!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                    <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                        Network error. Please try again later!
                     </Alert>
                 </Snackbar>
                 <div className='login-container h-full w-screen bg-top bg-no-repeat bg-cover' style={{ backgroundImage: `url(${background})` }} >

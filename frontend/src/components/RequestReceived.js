@@ -57,22 +57,6 @@ const theme = createTheme({
     }
 });
 
-function createData(name, category, requested, status, quantity, description, timeOfRequest, inTime, outTime) {
-    return {
-        name,
-        category,
-        requested,
-        status,
-        quantity,
-        description,
-        timeOfRequest,
-        inTime,
-        outTime,
-    };
-}
-
-const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['requested-by'], data.requestStatus, data.quantity, data.description, data.timeOfRequest, data.inTime, data.outTime));
-
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -119,7 +103,7 @@ const headCells = [
         label: 'Category',
     },
     {
-        id: 'requested',
+        id: 'requestedBy',
         numeric: false,
         disablePadding: false,
         label: 'Requested By',
@@ -137,7 +121,7 @@ const headCells = [
         label: 'Duration',
     },
     {
-        id: 'status',
+        id: 'requestStatus',
         numeric: false,
         disablePadding: false,
         label: 'Request Status',
@@ -194,6 +178,13 @@ function Row(props) {
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = React.useState(false);
 
+    const formatDate = (date) => {
+        const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
+        const day = new Date(parseInt(date)).toLocaleString('en-IN', { year: "numeric", month: "short", day: "numeric", time: "12" });
+        const outputDate = time + ', ' + day;
+        return outputDate;
+    }
+
     return (
         <React.Fragment>
             <TableRow style={index % 2 ? { background: "#A2D5F2" } : { background: "#FAFAFA" }}>
@@ -205,10 +196,10 @@ function Row(props) {
                     {row.name}
                 </TableCell>
                 <TableCell align="left">{row.category}</TableCell>
-                <TableCell align="left">{row.requested}</TableCell>
+                <TableCell align="left">{row.requestedBy}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="left"><p className={`italic font-medium ${row.status === 'Pending' ? "text-gray-500" : (row.status === 'Approved' ? "text-green-500" : "text-red-500")}`}>{row.status}</p></TableCell>
+                <TableCell align="left"><p className={`italic font-medium ${row.requestStatus === 'Pending' ? "text-gray-500" : (row.requestStatus === 'Approved' ? "text-green-500" : "text-red-500")}`}>{row.requestStatus}</p></TableCell>
                 <TableCell >
                     <IconButton
                         aria-label="expand row"
@@ -223,37 +214,37 @@ function Row(props) {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
-                            <div className='w-full'>
-                                {row.description}
+                            <div className='w-full flex flex-col gap-4'>
+                                <div>
+                                    <span className='font-medium mr-4'>Remarks : </span>
+                                    <span> {row.remarks || <span className='italic'>No remarks</span>}</span>
+                                </div>
+                                <div>
+                                    <span className='font-medium mr-4'>Time of Request : </span>
+                                    <span> {formatDate(row.requestTime)}</span>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2 w-3/4 items-end">
                                 <div>
-                                    <span className='font-medium mr-4'>Time of Request : </span>
-                                    <span> {row.timeOfRequest}</span>
-
-                                </div>
-                                <div>
                                     <span className='font-medium mr-4'>In Time : </span>
-                                    <span> {row.inTime}</span>
-
+                                    <span> {formatDate(row.inTime)}</span>
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>Out Time : </span>
-                                    <span> {row.outTime}</span>
-
+                                    <span> {formatDate(row.outTime)}</span>
                                 </div>
-                                <div class="p-2 flex">
-                                    <div class="mt-4 flex">
-                                        {row.status === 'Pending' ?
+                                <div className="p-2 flex">
+                                    <div className="mt-4 flex">
+                                        {row.requestStatus === 'Pending' ?
                                             (<React.Fragment>
-                                                <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
-                                                <button type="submit" class="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
+                                                <button type="submit" className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
+                                                <button type="submit" className="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
                                             </React.Fragment>)
                                             :
-                                            (row.status === 'Approved' ?
+                                            (row.requestStatus === 'Approved' ?
                                                 (<React.Fragment>
-                                                    <button type="submit" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Item Returned</button>
-                                                    <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Force Decline</button>
+                                                    <button type="submit" className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Item Returned</button>
+                                                    <button type="submit" className="bg-transparent hover:bg-red-500 text-red-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Force Decline</button>
                                                 </React.Fragment>) :
                                                 "")}
                                     </div>
@@ -267,7 +258,8 @@ function Row(props) {
     );
 }
 
-export default function RequestReceived() {
+export default function RequestReceived(props) {
+    const { user, data } = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -291,10 +283,10 @@ export default function RequestReceived() {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
+                                rowCount={data.length}
                             />
                             <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
+                                {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
                                         <Row key={index} row={row} index={index} />
                                     )}

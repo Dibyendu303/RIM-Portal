@@ -188,7 +188,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function Row(props) {
-    const { row, index, data, setData } = props;
+    const { row, index, data, setData, user } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
@@ -200,9 +200,14 @@ function Row(props) {
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
     const [openDownload, setOpenDownload] = useState(false);
+    const [remarks, setRemarks] = useState('');
+    const [quantity, setQuantity] = useState('');
 
     const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openRequestSuccessMsg, setOpenRequestSuccessMsg] = useState(false);
+    const [openRequestErrorMsg, setOpenRequestErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
 
     const handleClickSuccessMsg = () => {
         setOpenSuccessMsg(true);
@@ -226,6 +231,40 @@ function Row(props) {
         }
 
         setOpenErrorMsg(false);
+    };
+    const handleClickRequestSuccessMsg = () => {
+        setOpenRequestSuccessMsg(true);
+    };
+
+    const handleCloseRequestSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenRequestSuccessMsg(false);
+    };
+
+    const handleClickRequestErrorMsg = () => {
+        setOpenRequestErrorMsg(true);
+    };
+
+    const handleCloseRequestErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenRequestErrorMsg(false);
+    };
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
     };
 
 
@@ -371,7 +410,7 @@ function Row(props) {
                     });
             }
             catch (e) {
-                alert('Internal server error. Please try again later.');
+                handleClickNetworkErrorMsg();
             }
             setOpen(false);
         } else {
@@ -399,6 +438,41 @@ function Row(props) {
     }
     const handleViewPurchaseOrder = () => {
         window.open(row.purchaseOrder, "_blank", "noreferrer");
+    }
+
+    const handleSubmitRequest = async () => {
+        const sDate = new Date(booked.startDate);
+        const sTime = new Date(booked.startTime);
+        const eDate = new Date(booked.endDate);
+        const eTime = new Date(booked.endTime);
+        const startRange = new Date(sDate.getFullYear(), sDate.getMonth(), sDate.getDate(), sTime.getHours(), sTime.getMinutes(), sTime.getSeconds()).getTime();
+        const endRange = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate(), eTime.getHours(), eTime.getMinutes(), eTime.getSeconds()).getTime();
+
+        const options = {
+            "category": row.category,
+            "ownedBy": row.ownedBy,
+            "requestedBy": user.club,
+            "quantity": quantity,
+            "requestTime": Date.now(),
+            "inTime": startRange,
+            "outTime": endRange,
+            "requestStatus": "",
+            "remarks": remarks
+        };
+        console.log(options);
+        try {
+            axios.post("http://localhost:8080/request", options).then((res) => {
+                handleCloseRequest();
+                handleClickRequestSuccessMsg();
+            }).catch((e) => {
+                handleCloseRequest();
+                handleClickRequestErrorMsg();
+            });
+        }
+        catch (e) {
+            handleCloseRequest();
+            handleClickNetworkErrorMsg();
+        }
     }
 
     const vertical = 'top'
@@ -441,6 +515,21 @@ function Row(props) {
                             Unable to delete item. Please try again later!
                         </Alert>
                     </Snackbar>
+                    <Snackbar open={openRequestSuccessMsg} autoHideDuration={6000} onClose={handleCloseRequestSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseRequestSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Request submitted successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openRequestErrorMsg} autoHideDuration={6000} onClose={handleCloseRequestErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseRequestErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to submit request. Please try again later!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Network error. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full flex flex-col gap-4 justify-between'>
@@ -470,11 +559,11 @@ function Row(props) {
                     <div className='text-2xl'>Request Form</div>
                     <div className='grid grid-cols-2 items-center'>
                         <p className='text-base text-right mr-4 text-white/90'>Item: </p>
-                        <p className='text-sm font-normal text-white/80'>Hp Monitor</p>
+                        <p className='text-sm font-normal text-white/80'>{row.name}</p>
                         <p className='text-base text-right mr-4 text-white/90'>Owned By: </p>
-                        <p className='text-sm font-normal text-white/80'>Coding Club</p>
+                        <p className='text-sm font-normal text-white/80'>{row.ownedBy}</p>
                         <p className='text-base text-right mr-4 text-white/90'>Requested By: </p>
-                        <p className='text-sm font-normal text-white/80'>4i Labs</p>
+                        <p className='text-sm font-normal text-white/80'>{user.club}</p>
                     </div>
                 </DialogTitle>
                 <DialogContent>
@@ -550,8 +639,8 @@ function Row(props) {
                         </div>
                     </LocalizationProvider>
                     <div className='mt-6 flex flex-col gap-8'>
-                        <TextField id="remarks" label="Purpose/Remarks" variant="outlined" />
-                        <TextField required id="remarks" label="Quantity" variant="outlined" />
+                        <TextField id="remarks" label="Purpose/Remarks" variant="outlined" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+                        <TextField required id="quantity" label="Quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                     </div>
                 </DialogContent>
                 <DialogActions className='m-4 flex gap-2'>
@@ -562,7 +651,7 @@ function Row(props) {
                         padding: "0.5rem 2rem",
                         // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
                     }}>Cancel</Button>
-                    <Button variant="contained" onClick={handleCloseRequest} style={{
+                    <Button variant="contained" onClick={handleSubmitRequest} style={{
                         backgroundColor: "#021018",
                         color: "white",
                         padding: "0.5rem 2rem",
@@ -663,7 +752,7 @@ function Row(props) {
 }
 
 export default function EnhancedTable(props) {
-    const { data, setData } = props;
+    const { data, setData, user } = props;
     // console.log(data);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
@@ -693,7 +782,7 @@ export default function EnhancedTable(props) {
                             <TableBody>
                                 {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} data={data} setData={setData} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>

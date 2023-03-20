@@ -48,7 +48,7 @@ const Home = () => {
             axios.post("http://localhost:4000/checkToken", credentials)
                 .then((res) => {
                     setUser(res.data.user);
-                    console.log(res.data);
+                    console.log(res.data.user);
                 }).catch((e) => {
                     handleClickErrorMsg();
                     setTimeout(() => {
@@ -81,7 +81,7 @@ const Home = () => {
             <Navbar data={data} setData={setData} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <EnhancedTable data={data} setData={setData}></EnhancedTable>
+                <EnhancedTable data={data} setData={setData} user={user}></EnhancedTable>
             </div>
         </div>
     )

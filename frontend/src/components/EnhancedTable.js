@@ -449,6 +449,7 @@ function Row(props) {
         const endRange = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate(), eTime.getHours(), eTime.getMinutes(), eTime.getSeconds()).getTime();
 
         const options = {
+            "name": row.name,
             "category": row.category,
             "ownedBy": row.ownedBy,
             "requestedBy": user.club,
@@ -456,7 +457,7 @@ function Row(props) {
             "requestTime": Date.now(),
             "inTime": startRange,
             "outTime": endRange,
-            "requestStatus": "",
+            "requestStatus": "Pending",
             "remarks": remarks
         };
         console.log(options);
@@ -478,7 +479,13 @@ function Row(props) {
     const vertical = 'top'
     const horizontal = 'center';
 
-    const purchaseDate = new Date(parseInt(row.purchasedOn)).toLocaleString('en-IN');
+    const formatDate = (date) => {
+        const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
+        const day = new Date(parseInt(date)).toLocaleString('en-IN', { year: "numeric", month: "short", day: "numeric", time: "12" });
+        const outputDate = time + ', ' + day;
+        return outputDate;
+    }
+
     return (
         <React.Fragment>
             <TableRow style={index % 2 ? { background: "#A2D5F2" } : { background: "#FAFAFA" }}>
@@ -540,7 +547,7 @@ function Row(props) {
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> {purchaseDate}</span>
+                                    <span> {formatDate(row.purchasedOn)}</span>
                                 </div>
                                 <div>
                                     <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>

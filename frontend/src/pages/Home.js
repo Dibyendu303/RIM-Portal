@@ -6,16 +6,16 @@ import Filter from '../components/filter/Filter.jsx'
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { Button } from '@mui/material';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Home = () => {
+const Home = (props) => {
     const [data, setData] = useState([]);
-    const [user, setUser] = useState(null);
+    const { user, setUser } = props;
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
 
     const handleClickErrorMsg = () => {
         setOpenErrorMsg(true);
@@ -29,16 +29,29 @@ const Home = () => {
         setOpenErrorMsg(false);
     };
 
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
+
     const navigate = useNavigate();
     const fetchData = async () => {
         try {
             const fetchResponse = await fetch(`http://localhost:8080/item`);
             const data = await fetchResponse.json();
             setData(data);
-            console.log(data);
+            // console.log(data);
         }
         catch (e) {
-            alert("Internal server error. Please try again later");
+            handleClickNetworkErrorMsg();
+            // alert("Internal server error. Please try again later");
         }
     }
 
@@ -48,7 +61,6 @@ const Home = () => {
             axios.post("http://localhost:4000/checkToken", credentials)
                 .then((res) => {
                     setUser(res.data.user);
-                    console.log(res.data.user);
                 }).catch((e) => {
                     handleClickErrorMsg();
                     setTimeout(() => {
@@ -58,7 +70,9 @@ const Home = () => {
         }
         catch (e) {
             navigate('/login');
-            alert('Internal server error. Please try again later.');
+            // console.log("Home.js - Network error in validate token");
+            handleClickNetworkErrorMsg();
+            // alert('Internal server error. Please try again later.');
         }
     }
     useEffect(() => {
@@ -76,6 +90,11 @@ const Home = () => {
             <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
                 <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
                     Session expired. Please login again!
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                    Network error. Please try again later!
                 </Alert>
             </Snackbar>
             <Navbar data={data} setData={setData} />

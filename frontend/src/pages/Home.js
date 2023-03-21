@@ -58,21 +58,21 @@ const Home = (props) => {
     const validateToken = async (token) => {
         try {
             const credentials = { jwt: token };
-            axios.post("http://localhost:4000/checkToken", credentials)
-                .then((res) => {
-                    setUser(res.data.user);
-                }).catch((e) => {
-                    handleClickErrorMsg();
-                    setTimeout(() => {
-                        navigate('/login');
-                    }, 2000);
-                });
+            const resp = await axios.post("http://localhost:4000/checkToken", credentials);
+            setUser(resp.data.user);
+            fetchData(resp.data.user.club);
         }
         catch (e) {
-            navigate('/login');
-            // console.log("Home.js - Network error in validate token");
-            handleClickNetworkErrorMsg();
-            // alert('Internal server error. Please try again later.');
+            if (e.response.status === 401) {
+                handleClickErrorMsg();
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
+            }
+            else {
+                // console.log("Sent.js - Network error in validate token");
+                handleClickNetworkErrorMsg();
+            }
         }
     }
     useEffect(() => {
@@ -80,7 +80,12 @@ const Home = (props) => {
         if (token) {
             validateToken(token);
         }
-        fetchData();
+        else {
+            handleClickErrorMsg();
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        }
     }, []);
     const vertical = 'top'
     const horizontal = 'center';

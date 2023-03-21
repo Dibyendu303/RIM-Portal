@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -19,6 +19,14 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import tableData from '../data/Mock3.json';
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -174,9 +182,60 @@ EnhancedTableHead.propTypes = {
 };
 
 function Row(props) {
-    const { row, index } = props;
+    const { row, index, data, setData } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = React.useState(false);
+    const [openAcceptMsg, setOpenAcceptMsg] = useState(false);
+    const [openRejectMsg, setOpenRejectMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
+
+    const handleClickAcceptMsg = () => {
+        setOpenAcceptMsg(true);
+    };
+
+    const handleCloseAcceptMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenAcceptMsg(false);
+    };
+    const handleClickRejectMsg = () => {
+        setOpenRejectMsg(true);
+    };
+
+    const handleCloseRejectMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenRejectMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
+
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
 
     const formatDate = (date) => {
         const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
@@ -184,6 +243,69 @@ function Row(props) {
         const outputDate = time + ', ' + day;
         return outputDate;
     }
+
+    const handleAcceptRequest = (id) => {
+        if (window.confirm("Are you sure want to approve this request") === true) {
+            try {
+                const options = { "requestId": id }
+                axios.put("http://localhost:8080/request/accept", options)
+                    .then((res) => {
+                        // console.log(res.data);
+                        const newData = data.map(el => {
+                            if (el._id === id) {
+                                const newItem = { ...el, requestStatus: "Approved" };
+                                return newItem;
+                            }
+                            else
+                                return el;
+                        });
+                        setData(newData);
+                        handleClickAcceptMsg();
+                    }).catch((e) => {
+                        handleClickErrorMsg();
+                    });
+            }
+            catch (e) {
+                handleClickNetworkErrorMsg();
+            }
+            setOpen(false);
+        } else {
+            console.log("Remove item request cancelled");
+        }
+    }
+
+    const handleRejectRequest = (id) => {
+        if (window.confirm("Are you sure want to decline this request") === true) {
+            try {
+                const options = { "requestId": id }
+                axios.put("http://localhost:8080/request/reject", options)
+                    .then((res) => {
+                        // console.log(res.data);
+                        const newData = data.map(el => {
+                            if (el._id === id) {
+                                const newItem = { ...el, requestStatus: "Declined" };
+                                return newItem;
+                            }
+                            else
+                                return el;
+                        });
+                        setData(newData);
+                        handleClickRejectMsg();
+                    }).catch((e) => {
+                        handleClickErrorMsg();
+                    });
+            }
+            catch (e) {
+                handleClickNetworkErrorMsg();
+            }
+            setOpen(false);
+        } else {
+            console.log("Remove item request cancelled");
+        }
+    }
+
+    const vertical = 'top'
+    const horizontal = 'center';
 
     return (
         <React.Fragment>
@@ -212,6 +334,26 @@ function Row(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Snackbar open={openAcceptMsg} autoHideDuration={6000} onClose={handleCloseAcceptMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseAcceptMsg} severity="success" sx={{ width: '100%' }}>
+                            Request Accepted!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openRejectMsg} autoHideDuration={6000} onClose={handleCloseRejectMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseRejectMsg} severity="warning" sx={{ width: '100%' }}>
+                            Request Rejected!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to delete request. Please try again later!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Network error. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full flex flex-col gap-4'>
@@ -237,8 +379,8 @@ function Row(props) {
                                     <div className="mt-4 flex">
                                         {row.requestStatus === 'Pending' ?
                                             (<React.Fragment>
-                                                <button type="submit" className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">Decline</button>
-                                                <button type="submit" className="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">Approve</button>
+                                                <button type="submit" className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded" onClick={() => handleRejectRequest(row._id)}>Decline</button>
+                                                <button type="submit" className="bg-transparent hover:bg-green-500 text-green-700 ml-6 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded" onClick={() => handleAcceptRequest(row._id)}>Approve</button>
                                             </React.Fragment>)
                                             :
                                             (row.requestStatus === 'Approved' ?
@@ -259,7 +401,7 @@ function Row(props) {
 }
 
 export default function RequestReceived(props) {
-    const { user, data } = props;
+    const { user, data, setData } = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -288,7 +430,7 @@ export default function RequestReceived(props) {
                             <TableBody>
                                 {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} />
                                     )}
                             </TableBody>
                         </Table>

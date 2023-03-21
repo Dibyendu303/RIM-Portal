@@ -101,7 +101,7 @@ const Sent = (props) => {
             <Navbar textContent={"Requests - Sent"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <RequestSent user={user} data={data}></RequestSent>
+                <RequestSent user={user} data={data} setData={setData}></RequestSent>
             </div>
         </div>
     )

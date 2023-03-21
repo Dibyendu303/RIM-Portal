@@ -81,7 +81,6 @@ const Home = (props) => {
             validateToken(token);
         }
         else {
-            handleClickErrorMsg();
             setTimeout(() => {
                 navigate('/login');
             }, 2000);

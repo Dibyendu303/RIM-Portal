@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import React, { useState } from 'react'
 import Button from '@mui/material/Button';
@@ -35,7 +35,7 @@ function Navbar(props) {
   const [remarks, setRemarks] = useState('');
   const [quantity, setQuantity] = useState('');
   const text = props.textContent;
-
+  const navigate = useNavigate();
   const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
   const [openErrorMsg, setOpenErrorMsg] = useState(false);
 
@@ -116,6 +116,11 @@ function Navbar(props) {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('rim-jwt');
+    navigate('/login');
+  }
+
   const vertical = 'top'
   const horizontal = 'center';
 
@@ -150,6 +155,9 @@ function Navbar(props) {
                 Requests - Received
               </Link>
             </div>
+          </div>
+          <div className="cursor-pointer px-4 py-2 hover:text-white" onClick={handleLogout}>
+            Logout
           </div>
         </div>
         <div className="flex gap-6">

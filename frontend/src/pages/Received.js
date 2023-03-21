@@ -102,7 +102,7 @@ const Received = (props) => {
             <Navbar textContent={"Requests - Received"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <RequestReceived user={user} data={data}></RequestReceived>
+                <RequestReceived user={user} data={data} setData={setData}></RequestReceived>
             </div>
         </div>
     )

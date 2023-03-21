@@ -1,8 +1,8 @@
 require('dotenv').config()
-const express= require("express");
+const express = require("express");
 const jwt = require('jsonwebtoken');
 const requestRouter = express.Router();
-const { getSentRequests, getReceivedRequests, newRequest, acceptRequest, rejectRequest } = require("../controllers/requests.js");
+const { getSentRequests, getReceivedRequests, newRequest, acceptRequest, rejectRequest, deleteRequest } = require("../controllers/requests.js");
 const authenticateToken = require('../middleware/authToken.js');
 
 
@@ -14,6 +14,7 @@ const authenticateToken = require('../middleware/authToken.js');
 requestRouter.get("/sent", getSentRequests)
 requestRouter.get("/received", getReceivedRequests);
 requestRouter.post("/", newRequest);
-requestRouter.put("/accept",acceptRequest);
-requestRouter.put("/reject",rejectRequest);
+requestRouter.delete("/delete", deleteRequest);
+requestRouter.put("/accept", acceptRequest);
+requestRouter.put("/reject", rejectRequest);
 module.exports = requestRouter;

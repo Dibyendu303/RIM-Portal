@@ -19,6 +19,13 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import tableData from '../data/Mock2.json';
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -168,9 +175,49 @@ EnhancedTableHead.propTypes = {
 };
 
 function Row(props) {
-    const { row, index } = props;
+    const { row, index, data, setData } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = useState(false);
+
+    const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
+
+    const handleClickSuccessMsg = () => {
+        setOpenSuccessMsg(true);
+    };
+
+    const handleCloseSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
+
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
 
     const formatDate = (date) => {
         const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
@@ -178,6 +225,38 @@ function Row(props) {
         const outputDate = time + ', ' + day;
         return outputDate;
     }
+
+
+    const handleRemoveRequest = (id) => {
+        if (window.confirm("Are you sure want to delete this request") === true) {
+            try {
+                axios.delete("http://localhost:8080/request/delete", {
+                    headers: {
+                        Authorization: "usertoken"
+                    },
+                    data: {
+                        "ID": id
+                    }
+                })
+                    .then((res) => {
+                        const newData = data.filter(el => el._id !== id);
+                        setData(newData);
+                        handleClickSuccessMsg();
+                    }).catch((e) => {
+                        handleClickErrorMsg();
+                        // alert('Unable to delete item. Please try again later');
+                    });
+            }
+            catch (e) {
+                handleClickNetworkErrorMsg();
+            }
+            setOpen(false);
+        } else {
+            console.log("Remove request cancelled");
+        }
+    }
+    const vertical = 'top'
+    const horizontal = 'center';
 
     return (
         <React.Fragment>
@@ -205,6 +284,21 @@ function Row(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Request deleted successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to delete request. Please try again later!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Network error. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
                             <div className='w-full flex flex-col gap-4'>
@@ -226,7 +320,7 @@ function Row(props) {
                                     <span className='font-medium mr-4'>Out Time : </span>
                                     <span> {formatDate(row.outTime)}</span>
                                 </div>
-                                <button className="bg-transparent hover:bg-blue-500 text-blue-700 mt-6 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel Request</button>
+                                <button className="bg-transparent hover:bg-blue-500 text-blue-700 mt-6 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onClick={() => handleRemoveRequest(row._id)}>Cancel Request</button>
                             </div>
                         </div>
                     </Collapse>
@@ -237,7 +331,7 @@ function Row(props) {
 }
 
 export default function RequestSent(props) {
-    const { user, data } = props;
+    const { user, data, setData } = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
 
@@ -266,7 +360,7 @@ export default function RequestSent(props) {
                             <TableBody>
                                 {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} />
                                     )}
                             </TableBody>
                         </Table>

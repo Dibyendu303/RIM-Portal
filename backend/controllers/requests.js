@@ -6,8 +6,7 @@ module.exports.getSentRequests = async (req, res) => {
     try {
         // const user = await User.findOne({userID: req.user.userID});
         // const allRequests= await Request.find({requestedBy: req.user.club});
-
-        const allRequests = await Request.find({ requestedBy: req.body.user });
+        const allRequests = await Request.find({ requestedBy: req.query.user });
         res.json(allRequests);
     }
     catch (err) {
@@ -19,7 +18,7 @@ module.exports.getReceivedRequests = async (req, res) => {
     try {
         // const user = await User.findOne({userID: req.user.userID});
         // const allRequests= await Request.find({ownedBy: req.user.club});
-        const allRequests = await Request.find({ ownedBy: req.body.user });
+        const allRequests = await Request.find({ ownedBy: req.query.user });
         res.json(allRequests);
     }
     catch (err) {
@@ -33,11 +32,13 @@ module.exports.acceptRequest = async (req, res) => {
         // const user = await User.findOne({userID: req.user.userID});
         const targetRequest = await Request.findOneAndUpdate(
             { _id: req.body.requestId },
-            // {requestStatus:`Accepted by ${req.user.club}`}
-
-            { requestStatus: `Accepted` }
+            // {requestStatus:`Approved by ${req.user.club}`}
+            { requestStatus: `Approved` }
         );
-        newTime = targetRequest.requestTime;
+        const newTime = {
+            "Start": targetRequest.inTime,
+            "End": targetRequest.outTime
+        };
         // newTime = {Start : "2016-05-18T16:00:00Z", End: "2016-05-18T16:00:00Z"}  //Example
         const item = await Item.findOneAndUpdate(
             { _id: targetRequest.itemId },
@@ -59,8 +60,8 @@ module.exports.rejectRequest = async (req, res) => {
         // const user = await User.findOne({userID: req.user.userID});
         const targetRequest = await Request.findOneAndUpdate(
             { _id: req.body.requestId },
-            // {requestStatus:`Rejected by ${req.user.club}`}
-            { requestStatus: `Rejected` }
+            // {requestStatus:`Declined by ${req.user.club}`}
+            { requestStatus: `Declined` }
         );
         res.json(targetRequest);
     }
@@ -78,6 +79,25 @@ module.exports.newRequest = (req, res) => {
         res.send(newRequest);
     }
     catch (err) {
+        res.send(err);
+        console.log(err);
+    }
+}
+
+module.exports.deleteRequest = async (req, res) => {
+    try {
+        const id = req.body.ID;
+        // console.log("Delete item api called ", id);
+        Request.findByIdAndRemove(id, (err, doc) => {
+            if (!err) {
+                res.status(200).send({ result: "Success" });
+            } else {
+                res.send(err);
+                console.log(err);
+            }
+        })
+    }
+    catch {
         res.send(err);
         console.log(err);
     }

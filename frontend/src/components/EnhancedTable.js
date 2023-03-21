@@ -285,16 +285,18 @@ function Row(props) {
         return date.getTime();
     }
 
-    let timeSlot = [
-        {
-            Start: 1675286076000,
-            End: 1675472840000
-        },
-        {
-            Start: 1675712800000,
-            End: 1676012276000
-        }
-    ];
+    // let timeSlot = [
+    //     {
+    //         Start: 1675286076000,
+    //         End: 1675472840000
+    //     },
+    //     {
+    //         Start: 1675712800000,
+    //         End: 1676012276000
+    //     }
+    // ];
+
+    const timeSlot = row.occupiedTime;
 
     //set occupied time to next nearest hour   
     const occupiedTime = timeSlot.map((item) => {
@@ -449,6 +451,8 @@ function Row(props) {
         const endRange = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate(), eTime.getHours(), eTime.getMinutes(), eTime.getSeconds()).getTime();
 
         const options = {
+            "itemId": row._id,
+            "name": row.name,
             "category": row.category,
             "ownedBy": row.ownedBy,
             "requestedBy": user.club,
@@ -456,7 +460,7 @@ function Row(props) {
             "requestTime": Date.now(),
             "inTime": startRange,
             "outTime": endRange,
-            "requestStatus": "",
+            "requestStatus": "Pending",
             "remarks": remarks
         };
         console.log(options);
@@ -478,7 +482,13 @@ function Row(props) {
     const vertical = 'top'
     const horizontal = 'center';
 
-    const purchaseDate = new Date(parseInt(row.purchasedOn)).toLocaleString('en-IN');
+    const formatDate = (date) => {
+        const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
+        const day = new Date(parseInt(date)).toLocaleString('en-IN', { year: "numeric", month: "short", day: "numeric", time: "12" });
+        const outputDate = time + ', ' + day;
+        return outputDate;
+    }
+
     return (
         <React.Fragment>
             <TableRow style={index % 2 ? { background: "#A2D5F2" } : { background: "#FAFAFA" }}>
@@ -540,7 +550,7 @@ function Row(props) {
                                 </div>
                                 <div>
                                     <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> {purchaseDate}</span>
+                                    <span> {formatDate(row.purchasedOn)}</span>
                                 </div>
                                 <div>
                                     <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>
@@ -563,7 +573,7 @@ function Row(props) {
                         <p className='text-base text-right mr-4 text-white/90'>Owned By: </p>
                         <p className='text-sm font-normal text-white/80'>{row.ownedBy}</p>
                         <p className='text-base text-right mr-4 text-white/90'>Requested By: </p>
-                        {/* <p className='text-sm font-normal text-white/80'>{user.club}</p> */}
+                        <p className='text-sm font-normal text-white/80'>{user?.club}</p>
                     </div>
                 </DialogTitle>
                 <DialogContent>
@@ -634,7 +644,7 @@ function Row(props) {
                                     shouldDisableTime={checkAvailabilityEnd}
                                 />
                             </div>
-                            {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Enter valid date range</p>}
+                            {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Selected range contains an already booked slot</p>}
                             {invalidDate && <p className={` text-[#d32f2f] font-normal text-sm`}>Start date must be smaller than end date</p>}
                         </div>
                     </LocalizationProvider>

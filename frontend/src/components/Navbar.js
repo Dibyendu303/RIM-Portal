@@ -206,6 +206,7 @@ function Navbar(props) {
                 >
                   <MenuItem value={"Coding Club"}>Coding Club</MenuItem>
                   <MenuItem value={"Design Club"}>Design Club</MenuItem>
+                  <MenuItem value={"Electronics Club"}>Electronics Club</MenuItem>
                   <MenuItem value={"Robotics Club"}>Robotics Club</MenuItem>
                   <MenuItem value={"Consulting & Analytics"}>Consulting & Analytics</MenuItem>
                   <MenuItem value={"E-Cell"}>E-Cell</MenuItem>

@@ -773,6 +773,94 @@ export default function EnhancedTable(props) {
         setOrderBy(property);
     };
 
+    const query = props.query;
+    const clubName = props.clubName;
+    const catName = props.catName;
+    const startDate = props.startDate;
+    const endDate = props.endDate;
+
+    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/2014", 'DD/MM/YYYY') , endDate = dayjs()) => {
+        // if(query !== ''){
+        // var _ = require('underscore');
+        var results = data.filter((item) => {
+          return item.name.toLowerCase().includes(query.toLowerCase());
+        });
+        // console.log(typeof(results));
+    
+    
+        if (typeof clubName === "object" && clubName.length !== 0) {
+    
+          console.log(clubName);
+    
+          results = results.filter((item) => {
+            var flag = 0;
+            for (let j = 0; j < clubName.length; j++) {
+              var element = clubName[j].toLowerCase();
+              if (item.ownedBy.toLowerCase() === element) {
+                flag = 1;
+              }
+              else if(item.heldBy.toLowerCase() === element){
+                flag = 1;
+              }
+            }
+            if (flag === 1) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
+    
+    
+        // console.log(results);
+    
+    
+        if (typeof catName === "object" && catName.length !== 0) {
+    
+          results = results.filter((item) => {
+            var flag = 0;
+            for (let j = 0; j < catName.length; j++) {
+              var element = catName[j].toLowerCase();
+              if (item.category.toLowerCase() === element) {
+                flag = 1;
+              }
+            }
+            if (flag === 1) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
+        
+    
+        // if(typeof(startDate) === 'object' && typeof(endDate) === 'object'){
+    
+        //   results = results.filter((item) => {
+    
+
+        //     var date_of_purchase2 = (item.purchaseDate.slice(10,20));
+        //     var date_of_purchase = dayjs(date_of_purchase2, 'DD/MM/YYYY');
+    
+        //     if (date_of_purchase.isBetween(startDate, endDate, null, '[]')) {
+        //       return true;
+        //     } else {
+        //       return false;
+        //     }
+    
+        //   });
+    
+        // }
+    
+        // console.log(results);
+    
+        return results;
+    
+      };
+    
+      var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    
+
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{ width: '100%' }}>
@@ -787,12 +875,12 @@ export default function EnhancedTable(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={data.length}
+                                rowCount={searchResults.length}
                             />
                             <TableBody>
-                                {stableSort(data, getComparator(order, orderBy))
+                                {stableSort(searchResults, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} data={data} setData={setData} user={user} />
+                                        <Row key={index} row={row} index={index} data={searchResults} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>

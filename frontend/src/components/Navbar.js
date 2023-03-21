@@ -78,6 +78,10 @@ function Navbar(props) {
     setOpenAddModal(false);
   };
 
+  function filter(e){
+    props.onQuery(e.target.value);
+  }
+
   const handleSubmit = async () => {
     const options = {
       "name": itemName,
@@ -166,6 +170,7 @@ function Navbar(props) {
               className="searchbar border-none outline-none text-sm px-5 py-2 w-72"
               type="text"
               placeholder="Search item"
+              onChange={filter}
             ></input>
             <div className="flex justify-center items-center bg-[#A2D5F2] px-4 cursor-pointer text-xl text-[#032538] hover:bg-[#52a6de]">
               <IoSearch />

@@ -62,10 +62,10 @@ function Filter(props) {
   const [clubName, setClubName] = useState("");
   const [catName, setCatName] = useState("");
 
-  // props.startDate(startDate);
-  // props.endDate(endDate);
-  // props.clubName(clubName);
-  // props.catName(catName);
+  props.startDate(startDate);
+  props.endDate(endDate);
+  props.clubName(clubName);
+  props.catName(catName);
 
   return (
     <Wrap>

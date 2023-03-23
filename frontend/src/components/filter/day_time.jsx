@@ -18,7 +18,7 @@ const Wrap = styled.div`
 
 function DayTimeSelector(props) {
   
-  var [date1, setDate] = React.useState(dayjs("01/01/2014", 'DD/MM/YYYY'));
+  var [date1, setDate] = React.useState(dayjs("01/01/1950", 'DD/MM/YYYY'));
 
   const handleChange = (date) => {
 

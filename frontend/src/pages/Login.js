@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import background from "../images/login_background.jpg";
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
@@ -7,7 +7,12 @@ import axios from 'axios';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-// import { paper } from '@mui/material/colors';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const theme = createTheme({
     palette: {
@@ -24,12 +29,74 @@ const theme = createTheme({
 });
 
 
-const Login = () => {
+const Login = (props) => {
     const navigate = useNavigate();
     const [isValid, setIsValid] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [dirty, setDirty] = useState(false);
+    const { user, setUser } = props;
+    const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
+
+    const handleClickSuccessMsg = () => {
+        setOpenSuccessMsg(true);
+    };
+
+    const handleCloseSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
+
+    const validateToken = async (token) => {
+        try {
+            const credentials = { jwt: token };
+            axios.post("http://localhost:4000/checkToken", credentials)
+                .then((res) => {
+                    setUser(res.data.user);
+                    navigate('/');
+                }).catch((e) => {
+                });
+        }
+        catch (e) {
+            handleClickNetworkErrorMsg();
+        }
+    }
+
+    useEffect(() => {
+        const token = JSON.parse(localStorage.getItem('rim-jwt'));
+        if (token) {
+            validateToken(token);
+        }
+    }, []);
+
 
     const handleEmailChange = (e) => {
         const val = e.target.value;
@@ -48,23 +115,48 @@ const Login = () => {
         setPassword(val);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        console.log("Login API called");
-        // const credentials= {userID: email, password: password};
-        // axios.post("http://localhost:4000/login", credentials).then((res)=>{
-        //     console.log(res);
-        //     if(res.data.result=="Invalid"){
-        //         console.log("Invalid Credentials");
-        //     }
-        // });
-        navigate('/');
+    const handleSubmit = async (e) => {
+        try {
+            handleCloseErrorMsg();
+            const credentials = { userID: email, password: password };
+            // console.log(credentials);
+            axios.post("http://localhost:4000/login", credentials)
+                .then((res) => {
+                    localStorage.setItem('rim-jwt', JSON.stringify(res.data.jwt));
+                    handleClickSuccessMsg();
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 1000);
+                }).catch((e) => {
+                    handleClickErrorMsg();
+                });
+        }
+        catch (e) {
+            alert('Internal server error. Please try again later.');
+        }
     }
+
+    const vertical = 'top'
+    const horizontal = 'center';
 
     return (
         <>
             <ThemeProvider theme={theme}>
+                <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg}>
+                    <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                        Successfully logged in!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg}>
+                    <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                        Invalid email or Password!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                    <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                        Network error. Please try again later!
+                    </Alert>
+                </Snackbar>
                 <div className='login-container h-full w-screen bg-top bg-no-repeat bg-cover' style={{ backgroundImage: `url(${background})` }} >
                     <div className='bg-[#032538] min-h-screen h-full w-full md:w-6/12 lg:w-5/12 px-12 py-14'>
                         <h1 className='text-[4.5rem] font-bold text-white max-w-md mx-auto md:mx-0'>
@@ -79,13 +171,13 @@ const Login = () => {
                             autoComplete="off"
                             className='flex flex-col px-2 gap-8 py-12 max-w-md mx-auto md:mx-0 relative'
                         >
-                            <TextField error={dirty && !isValid} id="standard-basic" label="Enter email" variant="standard" value={email} onBlur={() => setDirty(true)} onChange={(e) => handleEmailChange(e)} InputLabelProps={{
+                            <TextField error={dirty && !isValid} id="email" label="Enter email" variant="standard" value={email} onBlur={() => setDirty(true)} onChange={(e) => handleEmailChange(e)} InputLabelProps={{
                                 style: {
                                     color: 'rgba(255, 255, 255, 0.6)',
                                 }
                             }} />
                             {dirty && !isValid && <p className={`absolute text-[#d32f2f] font-normal text-xs top-24 left-2`}>Enter valid email address</p>}
-                            <TextField id="standard-basic" label="Password" variant="standard" type="password" value={password} onChange={(e) => handlePasswordChange(e)} InputLabelProps={{
+                            <TextField id="password" label="Password" variant="standard" type="password" value={password} onChange={(e) => handlePasswordChange(e)} InputLabelProps={{
                                 style: {
                                     color: 'rgba(255, 255, 255, 0.6)'
                                 }

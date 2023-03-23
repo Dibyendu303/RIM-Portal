@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -27,7 +27,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import tableData from '../data/Mock1.json';
+import { IoClose } from "react-icons/io5";
+import { FiDownload } from "react-icons/fi";
+import { FaTrashAlt } from "react-icons/fa";
+import axios from 'axios';
+
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -65,51 +76,6 @@ const theme = createTheme({
         }
     }
 });
-
-function createData(name, category, owned, held, quantity, description, purchased) {
-    return {
-        name,
-        category,
-        owned,
-        held,
-        quantity,
-        description,
-        purchased,
-    };
-}
-
-const rows = tableData.sampleData.sample.map(data => createData(data['item-name'], data.category, data['owned-by'], data['held-by'], data.quantity, data.description, data['purchased-on']));
-
-// const rows = [
-//     createData('Cupcake', 305, 3.7, 67, 4.3),
-//     createData('Donut', 452, 25.0, 51, 4.9),
-//     createData('Eclair', 262, 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//     createData('Gingerbread', 356, 16.0, 49, 3.9),
-//     createData('Honeycomb', 408, 3.2, 87, 6.5),
-//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//     createData('KitKat', 518, 26.0, 65, 7.0),
-//     createData('Lollipop', 392, 0.2, 98, 0.0),
-//     createData('Marshmallow', 318, 0, 81, 2.0),
-//     createData('Nougat', 360, 19.0, 9, 37.0),
-//     createData('Oreo', 437, 18.0, 63, 4.0),
-// ];
-// const rows = [
-//     createData('Cupcake', 'Cupcake', 3.7, 67, 4.3),
-//     createData('Donut', "Donut", 25.0, 51, 4.9),
-//     createData('Eclair', "Eclair", 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 'Frozen yoghurt', 6.0, 24, 4.0),
-//     createData('Ice cream sandwich', 'Ice cream sandwich', 9.0, 37, 4.3),
-//     createData('Gingerbread', 'Gingerbread', 16.0, 49, 3.9),
-//     createData('Honeycomb', 'Honeycomb', 3.2, 87, 6.5),
-//     createData('Jelly Bean', 'Jelly Bean', 0.0, 94, 0.0),
-//     createData('KitKat', 'KitKat', 26.0, 65, 7.0),
-//     createData('Lollipop', 'Lollipop', 0.2, 98, 0.0),
-//     createData('Marshmallow', 'Marshmallow', 0, 81, 2.0),
-//     createData('Nougat', 'Nougat', 19.0, 9, 37.0),
-//     createData('Oreo', 'Oreo', 18.0, 63, 4.0),
-// ];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -157,13 +123,13 @@ const headCells = [
         label: 'Category',
     },
     {
-        id: 'owned',
+        id: 'ownedBy',
         numeric: false,
         disablePadding: false,
         label: 'Owned By',
     },
     {
-        id: 'held',
+        id: 'heldBy',
         numeric: false,
         disablePadding: false,
         label: 'Held By',
@@ -222,7 +188,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function Row(props) {
-    const { row, index } = props;
+    const { row, index, data, setData, user } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
     const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
@@ -234,6 +200,73 @@ function Row(props) {
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
     const [openDownload, setOpenDownload] = useState(false);
+    const [remarks, setRemarks] = useState('');
+    const [quantity, setQuantity] = useState('');
+
+    const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+    const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openRequestSuccessMsg, setOpenRequestSuccessMsg] = useState(false);
+    const [openRequestErrorMsg, setOpenRequestErrorMsg] = useState(false);
+    const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
+
+    const handleClickSuccessMsg = () => {
+        setOpenSuccessMsg(true);
+    };
+
+    const handleCloseSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccessMsg(false);
+    };
+
+    const handleClickErrorMsg = () => {
+        setOpenErrorMsg(true);
+    };
+
+    const handleCloseErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenErrorMsg(false);
+    };
+    const handleClickRequestSuccessMsg = () => {
+        setOpenRequestSuccessMsg(true);
+    };
+
+    const handleCloseRequestSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenRequestSuccessMsg(false);
+    };
+
+    const handleClickRequestErrorMsg = () => {
+        setOpenRequestErrorMsg(true);
+    };
+
+    const handleCloseRequestErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenRequestErrorMsg(false);
+    };
+    const handleClickNetworkErrorMsg = () => {
+        setOpenNetworkErrorMsg(true);
+    };
+
+    const handleCloseNetworkErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenNetworkErrorMsg(false);
+    };
+
 
     const handleClickDownload = () => {
         setOpenDownload(true);
@@ -252,16 +285,18 @@ function Row(props) {
         return date.getTime();
     }
 
-    let timeSlot = [
-        {
-            Start: 1675286076000,
-            End: 1675472840000
-        },
-        {
-            Start: 1675712800000,
-            End: 1676012276000
-        }
-    ];
+    // let timeSlot = [
+    //     {
+    //         Start: 1675286076000,
+    //         End: 1675472840000
+    //     },
+    //     {
+    //         Start: 1675712800000,
+    //         End: 1676012276000
+    //     }
+    // ];
+
+    const timeSlot = row.occupiedTime;
 
     //set occupied time to next nearest hour   
     const occupiedTime = timeSlot.map((item) => {
@@ -352,7 +387,38 @@ function Row(props) {
         return false;
     };
 
+    const handleRemoveItem = (id) => {
+        if (window.confirm("Are you sure want to remove this item") === true) {
+            // console.log("API call to remove item");
+            try {
+                // const options = { "ID": id };
+                // console.log(options);
 
+                axios.delete("http://localhost:8080/item", {
+                    headers: {
+                        Authorization: "usertoken"
+                    },
+                    data: {
+                        "ID": id
+                    }
+                })
+                    .then((res) => {
+                        const newData = data.filter(el => el._id !== id);
+                        setData(newData);
+                        handleClickSuccessMsg();
+                    }).catch((e) => {
+                        handleClickErrorMsg();
+                        // alert('Unable to delete item. Please try again later');
+                    });
+            }
+            catch (e) {
+                handleClickNetworkErrorMsg();
+            }
+            setOpen(false);
+        } else {
+            console.log("Remove item request cancelled");
+        }
+    }
 
     useEffect(() => {
         const flag = isValidRange();
@@ -366,6 +432,62 @@ function Row(props) {
     const handleClickOpenRequest = () => {
         setOpenRequest(true);
     };
+    const handleViewBill = () => {
+        window.open(row.bill, "_blank", "noreferrer");
+    }
+    const handleViewSanctionLetter = () => {
+        window.open(row.sanctionLetter, "_blank", "noreferrer");
+    }
+    const handleViewPurchaseOrder = () => {
+        window.open(row.purchaseOrder, "_blank", "noreferrer");
+    }
+
+    const handleSubmitRequest = async () => {
+        const sDate = new Date(booked.startDate);
+        const sTime = new Date(booked.startTime);
+        const eDate = new Date(booked.endDate);
+        const eTime = new Date(booked.endTime);
+        const startRange = new Date(sDate.getFullYear(), sDate.getMonth(), sDate.getDate(), sTime.getHours(), sTime.getMinutes(), sTime.getSeconds()).getTime();
+        const endRange = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate(), eTime.getHours(), eTime.getMinutes(), eTime.getSeconds()).getTime();
+
+        const options = {
+            "itemId": row._id,
+            "name": row.name,
+            "category": row.category,
+            "ownedBy": row.ownedBy,
+            "requestedBy": user.club,
+            "quantity": quantity,
+            "requestTime": Date.now(),
+            "inTime": startRange,
+            "outTime": endRange,
+            "requestStatus": "Pending",
+            "remarks": remarks
+        };
+        console.log(options);
+        try {
+            axios.post("http://localhost:8080/request", options).then((res) => {
+                handleCloseRequest();
+                handleClickRequestSuccessMsg();
+            }).catch((e) => {
+                handleCloseRequest();
+                handleClickRequestErrorMsg();
+            });
+        }
+        catch (e) {
+            handleCloseRequest();
+            handleClickNetworkErrorMsg();
+        }
+    }
+
+    const vertical = 'top'
+    const horizontal = 'center';
+
+    const formatDate = (date) => {
+        const time = new Date(parseInt(date)).toLocaleTimeString('en-IN', { hour: "2-digit", minute: "2-digit", hour12: true });
+        const day = new Date(parseInt(date)).toLocaleString('en-IN', { year: "numeric", month: "short", day: "numeric", time: "12" });
+        const outputDate = time + ', ' + day;
+        return outputDate;
+    }
 
     return (
         <React.Fragment>
@@ -378,8 +500,8 @@ function Row(props) {
                     {row.name}
                 </TableCell>
                 <TableCell align="left">{row.category}</TableCell>
-                <TableCell align="left">{row.owned}</TableCell>
-                <TableCell align="left">{row.held}</TableCell>
+                <TableCell align="left">{row.ownedBy}</TableCell>
+                <TableCell align="left">{row.heldBy}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
                 <TableCell >
                     <IconButton
@@ -393,22 +515,50 @@ function Row(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Item deleted successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to delete item. Please try again later!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openRequestSuccessMsg} autoHideDuration={6000} onClose={handleCloseRequestSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseRequestSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Request submitted successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openRequestErrorMsg} autoHideDuration={6000} onClose={handleCloseRequestErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseRequestErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to submit request. Please try again later!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseNetworkErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Network error. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <div className="flex px-8 py-8 gap-16">
-                            <div className='w-full'>
-                                {row.description}
+                            <div className='w-full flex flex-col gap-4 justify-between'>
+                                {/* <div>{row.description || <span className='italic'>No description provided</span>}</div> */}
+                                <div>
+                                    <span className='font-medium mr-4'>Remarks : </span>
+                                    <span> {row.remarks || <span className='italic'>No remarks</span>}</span>
+                                </div>
+                                <div>
+                                    <span className='font-medium mr-4'>Purchased On : </span>
+                                    <span> {formatDate(row.purchasedOn)}</span>
+                                </div>
+                                <div>
+                                    <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
                                 <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
-                                <div>
-                                    <span className='font-medium mr-4'>Purchased On : </span>
-                                    <span> {row.purchased}</span>
-
-                                </div>
-                                <div className="flex gap-4 text-blue-600 items-center cursor-pointer ">
-                                    <span className="text-blue-600 hover:underline" onClick={handleClickDownload}>Download Content</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z" /></svg>
-                                </div>
+                                <div className="cursor-pointer text-blue-600 hover:underline flex justify-center items-center gap-2" onClick={handleClickDownload}>Download Content <FiDownload /></div>
                             </div>
                         </div>
                     </Collapse>
@@ -419,11 +569,11 @@ function Row(props) {
                     <div className='text-2xl'>Request Form</div>
                     <div className='grid grid-cols-2 items-center'>
                         <p className='text-base text-right mr-4 text-white/90'>Item: </p>
-                        <p className='text-sm font-normal text-white/80'>Hp Monitor</p>
+                        <p className='text-sm font-normal text-white/80'>{row.name}</p>
                         <p className='text-base text-right mr-4 text-white/90'>Owned By: </p>
-                        <p className='text-sm font-normal text-white/80'>Coding Club</p>
+                        <p className='text-sm font-normal text-white/80'>{row.ownedBy}</p>
                         <p className='text-base text-right mr-4 text-white/90'>Requested By: </p>
-                        <p className='text-sm font-normal text-white/80'>4i Labs</p>
+                        <p className='text-sm font-normal text-white/80'>{user?.club}</p>
                     </div>
                 </DialogTitle>
                 <DialogContent>
@@ -494,13 +644,13 @@ function Row(props) {
                                     shouldDisableTime={checkAvailabilityEnd}
                                 />
                             </div>
-                            {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Enter valid date range</p>}
+                            {errorRange && <p className={` text-[#d32f2f] font-normal text-sm`}>Selected range contains an already booked slot</p>}
                             {invalidDate && <p className={` text-[#d32f2f] font-normal text-sm`}>Start date must be smaller than end date</p>}
                         </div>
                     </LocalizationProvider>
                     <div className='mt-6 flex flex-col gap-8'>
-                        <TextField id="remarks" label="Purpose/Remarks" variant="outlined" />
-                        <TextField required id="remarks" label="Quantity" variant="outlined" />
+                        <TextField id="remarks" label="Purpose/Remarks" variant="outlined" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+                        <TextField required id="quantity" label="Quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                     </div>
                 </DialogContent>
                 <DialogActions className='m-4 flex gap-2'>
@@ -511,7 +661,7 @@ function Row(props) {
                         padding: "0.5rem 2rem",
                         // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
                     }}>Cancel</Button>
-                    <Button variant="contained" onClick={handleCloseRequest} style={{
+                    <Button variant="contained" onClick={handleSubmitRequest} style={{
                         backgroundColor: "#021018",
                         color: "white",
                         padding: "0.5rem 2rem",
@@ -522,62 +672,86 @@ function Row(props) {
             <Dialog open={openDownload} onClose={handleCloseDownload}>
                 <DialogTitle className='bg-[#032538] text-white flex justify-between items-center'>
                     <div className='text-2xl'>Downloads</div>
-                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin">x</span>
+                    <span onClick={handleCloseDownload} className="cursor-pointer text-2xl font-thin"><IoClose /></span>
                 </DialogTitle>
                 <DialogContent>
                     <div className='flex flex-col gap-4 p-4'>
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Bill</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.bill ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewBill} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewBill} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Bill Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Sanction Letter</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.sanctionLetter ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewSanctionLetter} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewSanctionLetter} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Sanction Letter Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                         <div className='flex justify-between items-center gap-24'>
                             <p className='text-2xl'>Purchase order</p>
                             <div className='flex gap-4'>
-                                <Button variant="outlined" onClick={handleCloseDownload} style={{
-                                    // backgroundColor: "#021018",
-                                    color: "#021018",
-                                    border: "1px solid #021018",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>View</Button>
-                                <Button variant="contained" onClick={handleCloseDownload} style={{
-                                    backgroundColor: "#021018",
-                                    color: "white",
-                                    padding: "0.5rem 2rem",
-                                    // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
-                                }}>Download</Button>
+                                {row.purchaseOrder ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewPurchaseOrder} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewPurchaseOrder} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Purchase order Not Found</span>
+                                    </>
+                                }
                             </div>
                         </div>
                     </div>
@@ -587,7 +761,9 @@ function Row(props) {
     );
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
+    const { data, setData, user } = props;
+    // console.log(data);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
 
@@ -596,6 +772,94 @@ export default function EnhancedTable() {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const query = props.query;
+    const clubName = props.clubName;
+    const catName = props.catName;
+    const startDate = props.startDate;
+    const endDate = props.endDate;
+
+    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/2014", 'DD/MM/YYYY') , endDate = dayjs()) => {
+        // if(query !== ''){
+        // var _ = require('underscore');
+        var results = data.filter((item) => {
+          return item.name.toLowerCase().includes(query.toLowerCase());
+        });
+        // console.log(typeof(results));
+    
+    
+        if (typeof clubName === "object" && clubName.length !== 0) {
+    
+          console.log(clubName);
+    
+          results = results.filter((item) => {
+            var flag = 0;
+            for (let j = 0; j < clubName.length; j++) {
+              var element = clubName[j].toLowerCase();
+              if (item.ownedBy.toLowerCase() === element) {
+                flag = 1;
+              }
+              else if(item.heldBy.toLowerCase() === element){
+                flag = 1;
+              }
+            }
+            if (flag === 1) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
+    
+    
+        // console.log(results);
+    
+    
+        if (typeof catName === "object" && catName.length !== 0) {
+    
+          results = results.filter((item) => {
+            var flag = 0;
+            for (let j = 0; j < catName.length; j++) {
+              var element = catName[j].toLowerCase();
+              if (item.category.toLowerCase() === element) {
+                flag = 1;
+              }
+            }
+            if (flag === 1) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
+        
+    
+        // if(typeof(startDate) === 'object' && typeof(endDate) === 'object'){
+    
+        //   results = results.filter((item) => {
+    
+
+        //     var date_of_purchase2 = (item.purchaseDate.slice(10,20));
+        //     var date_of_purchase = dayjs(date_of_purchase2, 'DD/MM/YYYY');
+    
+        //     if (date_of_purchase.isBetween(startDate, endDate, null, '[]')) {
+        //       return true;
+        //     } else {
+        //       return false;
+        //     }
+    
+        //   });
+    
+        // }
+    
+        // console.log(results);
+    
+        return results;
+    
+      };
+    
+      var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    
 
     return (
         <ThemeProvider theme={theme}>
@@ -611,12 +875,12 @@ export default function EnhancedTable() {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
+                                rowCount={searchResults.length}
                             />
                             <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
+                                {stableSort(searchResults, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={row.name} row={row} index={index} />
+                                        <Row key={index} row={row} index={index} data={searchResults} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>

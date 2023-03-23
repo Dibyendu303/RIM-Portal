@@ -2,18 +2,30 @@ require('dotenv').config()
 const express= require("express");
 const jwt = require('jsonwebtoken');
 const itemRouter = express.Router();
-const {download, addItem, listAllItems} = require("../controllers/item.js");
+const {download, addItem, listAllItems, deleteItem, returnItem} = require("../controllers/item.js");
 const authenticateToken = require('../middleware/authToken.js');
+const multer = require("multer");
+
 
 //With authentication token
 // itemRouter.route("/")
 //     .post(authenticateToken, addItem)
-//     .get(authenticateToken, listAllItems);
+//     .get(authenticateToken, listAllItems)
+//     .delete(authenticateToken, deleteItem);
 
 //Without token
+
+// const app = express();
+// app.use(cors());
+// app.use(express.json());
+const memoStorage = multer.memoryStorage();
+const upload = multer({ memoStorage });
+const filesUploader=upload.fields([{name:"bill"},{name:"sanctionLetter"}])
 itemRouter.route("/")
-    .post(addItem)
-    .get(listAllItems);
+    .post(filesUploader,addItem)
+    .get(listAllItems)
+    .delete(deleteItem);
+itemRouter.put("/return", returnItem);
 itemRouter.get("/download", authenticateToken, download);
 module.exports = itemRouter;
 

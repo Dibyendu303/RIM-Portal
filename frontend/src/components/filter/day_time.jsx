@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { useState } from 'react';
 import dayjs from 'dayjs';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styled from "styled-components";
 
 
@@ -15,20 +16,26 @@ const Wrap = styled.div`
 
 `;
 
-function DayTimeSelector() {
-  const [value, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
+function DayTimeSelector(props) {
+  
+  var [date1, setDate] = React.useState(dayjs("01/01/2014", 'DD/MM/YYYY'));
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
+  const handleChange = (date) => {
 
+
+      setDate(date);
+      props.list(date);
+      // console.log(event);
+    };
+    
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Wrap>
-            <DateTimePicker
+            <DatePicker
                 label="From Date"
-                value={value}
-                onChange={handleChange}
+                value={date1}
+                inputFormat="DD/MM/YYYY"
+                onChange={(date1) => handleChange(date1)}
                 renderInput={(params) => <TextField {...params} />}
             />
         </Wrap>
@@ -37,20 +44,29 @@ function DayTimeSelector() {
   );
 }
 
-function DayTimeSelector2() {
-  const [value2, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
+function DayTimeSelector2(props) {
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
+  var [date2, setDate] = React.useState(dayjs());
+
+  const handleChange = (date) => {
+
+
+    setDate(date);
+    props.list2(date);
+    // console.log(event);
   };
+
+
+  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Wrap>
-            <DateTimePicker
-                label="From Date"
-                value={value2}
-                onChange={handleChange}
+            <DatePicker
+                label="To Date"
+                value={date2}
+                inputFormat="DD/MM/YYYY"
+                onChange={(date) => handleChange( date)}
                 renderInput={(params) => <TextField {...params} />}
             />
         </Wrap>
@@ -73,14 +89,20 @@ const Heading = styled.div`
 
 `;
 
-export default function DayTime(){
+export default function DayTime(props){
+
+  const [startDate, getStartDate] = useState();
+  const [endDate, getEndDate] = useState();
+
+  props.startDate(startDate);
+  props.endDate(endDate);
 
   return(
     <div>
       <Heading>Purchased On</Heading>
       <Wrap>
-        <DayTimeSelector></DayTimeSelector>
-        <DayTimeSelector2></DayTimeSelector2>
+        <DayTimeSelector list = {getStartDate}></DayTimeSelector>
+        <DayTimeSelector2 list2 = {getEndDate}></DayTimeSelector2>
       </Wrap>
 
     </div>

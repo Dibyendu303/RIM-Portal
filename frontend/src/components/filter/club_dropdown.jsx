@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,7 +21,7 @@ const MenuProps = {
 };
 
 const names = [
-  'Coding Club',
+  'Coding club',
   'C&A',
   'FEC',
   'E-Cell',
@@ -28,20 +29,23 @@ const names = [
   'Aeromodelling',
   'IITG.Ai',
   'Automobile',
+  '4i Labs',
 ];
 
-function ClubSelector() {
-  const [personName, setPersonName] = React.useState([]);
+function ClubSelector(props) {
+  const [clubName, setClubName] = React.useState([]);
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setClubName(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
+
+  props.list(clubName);
 
   return (
     <div>
@@ -51,7 +55,7 @@ function ClubSelector() {
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
           multiple
-          value={personName}
+          value={clubName}
           onChange={handleChange}
           input={<OutlinedInput label="Tag" />}
           renderValue={(selected) => selected.join(', ')}
@@ -59,7 +63,7 @@ function ClubSelector() {
         >
           {names.map((name) => (
             <MenuItem key={name} value={name}>
-              <Checkbox checked={personName.indexOf(name) > -1} />
+              <Checkbox checked={clubName.indexOf(name) > -1} />
               <ListItemText primary={name} />
             </MenuItem>
           ))}
@@ -82,12 +86,16 @@ const Heading = styled.div`
 
 `;
 
-export default function ClubSelect(){
+export default function ClubSelect(props){
+
+  const [clubName, getNames] = useState();
+
+  props.clubName(clubName);
 
   return(
     <div>
       <Heading>Club Name</Heading>
-      <ClubSelector></ClubSelector>
+      <ClubSelector list = {getNames}></ClubSelector>
     </div>
 
   )

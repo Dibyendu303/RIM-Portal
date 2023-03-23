@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -26,18 +27,20 @@ const names = [
   'Consumables',
 ];
 
-function CategorySelector() {
-  const [personName, setPersonName] = React.useState([]);
+function CategorySelector(props) {
+  const [catName, setCatName] = React.useState([]);
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setCatName(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
+
+  props.list(catName);
 
   return (
     <div>
@@ -47,7 +50,7 @@ function CategorySelector() {
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
           multiple
-          value={personName}
+          value={catName}
           onChange={handleChange}
           input={<OutlinedInput label="Tag" />}
           renderValue={(selected) => selected.join(', ')}
@@ -55,7 +58,7 @@ function CategorySelector() {
         >
           {names.map((name) => (
             <MenuItem key={name} value={name}>
-              <Checkbox checked={personName.indexOf(name) > -1} />
+              <Checkbox checked={catName.indexOf(name) > -1} />
               <ListItemText primary={name} />
             </MenuItem>
           ))}
@@ -78,12 +81,16 @@ const Heading = styled.div`
 
 `;
 
-export default function CategorySelect(){
+export default function CategorySelect(props){
+
+  const [catName, getNames] = useState();
+
+  props.catName(catName);
 
   return(
     <div>
       <Heading>Category Name</Heading>
-      <CategorySelector></CategorySelector>
+      <CategorySelector list = {getNames}></CategorySelector>
     </div>
 
   )

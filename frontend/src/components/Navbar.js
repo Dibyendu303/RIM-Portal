@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import React, { useState } from 'react'
 import Button from '@mui/material/Button';
@@ -17,13 +17,51 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { FaAngleDown } from "react-icons/fa";
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Navbar(props) {
+  const { data, setData } = props;
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [purchaseDate, setPurchaseDate] = React.useState(dayjs());
-  const [ownedBy, setOwnedBy] = React.useState('');
-  const [category, setCategory] = React.useState('');
+  const [purchaseDate, setPurchaseDate] = useState(dayjs());
+  const [ownedBy, setOwnedBy] = useState('');
+  const [category, setCategory] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [remarks, setRemarks] = useState('');
+  const [quantity, setQuantity] = useState('');
   const text = props.textContent;
+  const navigate = useNavigate();
+  const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
+  const [openErrorMsg, setOpenErrorMsg] = useState(false);
+
+  const handleClickSuccessMsg = () => {
+    setOpenSuccessMsg(true);
+  };
+
+  const handleCloseSuccessMsg = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSuccessMsg(false);
+  };
+
+  const handleClickErrorMsg = () => {
+    setOpenErrorMsg(true);
+  };
+
+  const handleCloseErrorMsg = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorMsg(false);
+  };
 
   const handleOwnership = (event) => {
     setOwnedBy(event.target.value);
@@ -39,8 +77,69 @@ function Navbar(props) {
   const handleCloseAddModal = () => {
     setOpenAddModal(false);
   };
+
+  function filter(e){
+    props.onQuery(e.target.value);
+  }
+
+  const handleSubmit = async () => {
+    const options = {
+      "name": itemName,
+      "category": category,
+      "ownedBy": ownedBy,
+      "quantity": quantity,
+      "purchasedOn": purchaseDate.toDate().getTime(),
+      "bill": "",
+      "sanctionLetter": "",
+      "purchaseOrder": "",
+      "status": "Available",
+      "remarks": remarks,
+      "occupiedTime": []
+    };
+    console.log(options);
+    try {
+      axios.post("http://localhost:8080/item", options).then((res) => {
+        console.log(res.data);
+        const newItem = res.data.item;
+        const newData = [...data, newItem];
+        setData(newData);
+        handleCloseAddModal();
+        handleClickSuccessMsg();
+        // alert('Item added successfully');
+      }).catch((e) => {
+        handleCloseAddModal();
+        handleClickErrorMsg();
+        // alert('Unable to add item. Please try again later');
+
+      });
+    }
+    catch (e) {
+      handleCloseAddModal();
+      handleClickErrorMsg();
+      // alert('Unable to add item. Please try again later');
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('rim-jwt');
+    navigate('/login');
+  }
+
+  const vertical = 'top'
+  const horizontal = 'center';
+
   return (
     <>
+      <Snackbar open={openSuccessMsg} autoHideDuration={6000} onClose={handleCloseSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+        <Alert onClose={handleCloseSuccessMsg} severity="success" sx={{ width: '100%' }}>
+          Item added successfully!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+        <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
+          Unable to add item. Please try again later!
+        </Alert>
+      </Snackbar>
       <div className="flex items-center bg-[#032538] p-5 justify-between">
         <div className="flex gap-5 items-center text-white/70">
           <Link to="/" className="text-xl px-4 font-bold text-white">
@@ -61,6 +160,9 @@ function Navbar(props) {
               </Link>
             </div>
           </div>
+          <div className="cursor-pointer px-4 py-2 hover:text-white" onClick={handleLogout}>
+            Logout
+          </div>
         </div>
         <div className="flex gap-6">
           <div className="flex">
@@ -68,6 +170,7 @@ function Navbar(props) {
               className="searchbar border-none outline-none text-sm px-5 py-2 w-72"
               type="text"
               placeholder="Search item"
+              onChange={filter}
             ></input>
             <div className="flex justify-center items-center bg-[#A2D5F2] px-4 cursor-pointer text-xl text-[#032538] hover:bg-[#52a6de]">
               <IoSearch />
@@ -86,10 +189,10 @@ function Navbar(props) {
                         will send updates occasionally.
                     </DialogContentText> */}
           <div className='mt-8 flex flex-col gap-8'>
-            <TextField id="item-name" label="Item Name" variant="outlined" />
+            <TextField id="item-name" label="Item Name" variant="outlined" value={itemName} onChange={(e) => setItemName(e.target.value)} />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <div className='grid grid-cols-2 gap-8'>
-                <TextField id="quantity" label="Quantity" variant="outlined" />
+                <TextField id="quantity" label="Quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                 <DateTimePicker
                   renderInput={(props) => <TextField {...props} />}
                   label="Purchase Date"
@@ -109,9 +212,15 @@ function Navbar(props) {
                   label="Owned By"
                   onChange={handleOwnership}
                 >
-                  <MenuItem value={"coding_club"}>Coding Club</MenuItem>
-                  <MenuItem value={"design_club"}>Design Club</MenuItem>
-                  <MenuItem value={"robotics_club"}>Robotics Club</MenuItem>
+                  <MenuItem value={"Coding Club"}>Coding Club</MenuItem>
+                  <MenuItem value={"Design Club"}>Design Club</MenuItem>
+                  <MenuItem value={"Electronics Club"}>Electronics Club</MenuItem>
+                  <MenuItem value={"Robotics Club"}>Robotics Club</MenuItem>
+                  <MenuItem value={"Consulting & Analytics"}>Consulting & Analytics</MenuItem>
+                  <MenuItem value={"E-Cell"}>E-Cell</MenuItem>
+                  <MenuItem value={"Aeromodelling Club"}>Aeromodelling Club</MenuItem>
+                  <MenuItem value={"IITG.Ai Club"}>IITG.Ai Club</MenuItem>
+                  <MenuItem value={"Automobile Club"}>Automobile Club</MenuItem>
                 </Select>
               </FormControl>
               <FormControl fullWidth>
@@ -122,11 +231,11 @@ function Navbar(props) {
                   label="Category"
                   onChange={handleCategory}
                 >
-                  <MenuItem value={"major"}>Major Equipment</MenuItem>
-                  <MenuItem value={"minor"}>Minor Equipment</MenuItem>
-                  <MenuItem value={"consumables"}>Consumables</MenuItem>
-                  <MenuItem value={"furniture"}>Furniture</MenuItem>
-                  <MenuItem value={"books"}>Books</MenuItem>
+                  <MenuItem value={"Major Equipment"}>Major Equipment</MenuItem>
+                  <MenuItem value={"Minor Equipment"}>Minor Equipment</MenuItem>
+                  <MenuItem value={"Consumables"}>Consumables</MenuItem>
+                  <MenuItem value={"Furniture"}>Furniture</MenuItem>
+                  <MenuItem value={"Books"}>Books</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -154,7 +263,7 @@ function Navbar(props) {
               </div>
             </div>
             {/* <TextField required id="remarks" label="Quantity" variant="outlined" /> */}
-            <TextField id="remarks" label="Remarks/Description" variant="outlined" />
+            <TextField id="remarks" label="Remarks/Description" variant="outlined" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
           </div>
         </DialogContent>
         <DialogActions className='m-4 flex gap-2'>
@@ -165,7 +274,7 @@ function Navbar(props) {
             padding: "0.5rem 2rem",
             // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
           }}>Cancel</Button>
-          <Button variant="contained" onClick={handleCloseAddModal} style={{
+          <Button variant="contained" onClick={handleSubmit} style={{
             backgroundColor: "#021018",
             color: "white",
             padding: "0.5rem 2rem",

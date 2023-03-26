@@ -42,6 +42,11 @@ function Navbar(props) {
   const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
   const [openErrorMsg, setOpenErrorMsg] = useState(false);
 
+  const [bill, setBill] = useState(null);
+  const [sanctionLetter, setSanctionLetter] = useState(null);
+  const [purchaseOrder, setPurchaseOrder] = useState(null);
+  const [inspectionReport, setInspectionReport] = useState(null);
+
   const handleClickSuccessMsg = () => {
     setOpenSuccessMsg(true);
   };
@@ -92,9 +97,10 @@ function Navbar(props) {
       "ownedBy": ownedBy,
       "quantity": quantity,
       "purchasedOn": purchaseDate.toDate().getTime(),
-      "bill": "",
-      "sanctionLetter": "",
-      "purchaseOrder": "",
+      "bill": bill,
+      "sanctionLetter": sanctionLetter,
+      "purchaseOrder": purchaseOrder,
+      "inspectionReport": inspectionReport,
       "status": "Available",
       "remarks": remarks,
       "occupiedTime": []
@@ -246,38 +252,15 @@ function Navbar(props) {
                 </Select>
               </FormControl>
             </div>
-            <div className='flex justify-between gap-4'>
-              <div>
-                <p className='font-medium'>Sanction letter</p>
-                <input type="file" name="bill" id="bill" />
-              </div>
-              {/* <div>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input type="file" />
-                </Button>
-              </div>
-              <div>
-                <p className='font-medium'>Purchase order</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
-              </div>
-              <div>
-                <p className='font-medium'>Bill</p>
-                <Button variant="outlined" component="label">
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
-              </div>
-              <div>
-                <p className='font-medium'>Inspection Report</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
-              </div> */}
+            <div className='grid grid-cols-3 gap-4 items-center'>
+              <p className='font-medium'>Sanction letter:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="sanctionLetter" id="sanctionLetter" onChange={(e) => setSanctionLetter(e.target.files[0])} />
+              <p className='font-medium'>Purchase Order:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="purchaseOrder" id="purchaseOrder" onChange={(e) => setPurchaseOrder(e.target.files[0])} />
+              <p className='font-medium'>Bill:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="bill" id="bill" onChange={(e) => setBill(e.target.files[0])} />
+              <p className='font-medium'>Inspection Report:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="inspectionReport" id="inspectionReport" onChange={(e) => setInspectionReport(e.target.files[0])} />
             </div>
             <div>
               <p className='font-medium'>Stockbook details:</p>

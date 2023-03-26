@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar';
-import Filter from '../components/filter/filter.jsx'
+import Filter from '../components/filter/Filter.jsx'
 import RequestSent from '../components/RequestSent';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';

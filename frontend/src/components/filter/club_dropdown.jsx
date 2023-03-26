@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -33,7 +31,7 @@ const names = [
 ];
 
 function ClubSelector(props) {
-  const [clubName, setClubName] = React.useState([]);
+  const { clubName, setClubName } = props;
 
   const handleChange = (event) => {
     const {
@@ -44,8 +42,6 @@ function ClubSelector(props) {
       typeof value === 'string' ? value.split(',') : value,
     );
   };
-
-  props.list(clubName);
 
   return (
     <div>
@@ -86,16 +82,12 @@ const Heading = styled.div`
 
 `;
 
-export default function ClubSelect(props){
-
-  const [clubName, getNames] = useState();
-
-  props.clubName(clubName);
-
-  return(
+export default function ClubSelect(props) {
+  const { clubName, setClubName } = props;
+  return (
     <div>
       <Heading>Club Name</Heading>
-      <ClubSelector list = {getNames}></ClubSelector>
+      <ClubSelector clubName={clubName} setClubName={setClubName}></ClubSelector>
     </div>
 
   )

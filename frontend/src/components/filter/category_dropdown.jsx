@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -28,7 +26,7 @@ const names = [
 ];
 
 function CategorySelector(props) {
-  const [catName, setCatName] = React.useState([]);
+  const { catName, setCatName } = props;
 
   const handleChange = (event) => {
     const {
@@ -39,8 +37,6 @@ function CategorySelector(props) {
       typeof value === 'string' ? value.split(',') : value,
     );
   };
-
-  props.list(catName);
 
   return (
     <div>
@@ -81,18 +77,14 @@ const Heading = styled.div`
 
 `;
 
-export default function CategorySelect(props){
+export default function CategorySelect(props) {
 
-  const [catName, getNames] = useState();
-
-  props.catName(catName);
-
-  return(
+  const { catName, setCatName } = props;
+  return (
     <div>
       <Heading>Category Name</Heading>
-      <CategorySelector list = {getNames}></CategorySelector>
+      <CategorySelector catName={catName} setCatName={setCatName}></CategorySelector>
     </div>
 
   )
-
 }

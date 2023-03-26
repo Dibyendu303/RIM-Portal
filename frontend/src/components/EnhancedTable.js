@@ -521,6 +521,9 @@ function Row(props) {
     const handleViewPurchaseOrder = () => {
         window.open(row.purchaseOrder, "_blank", "noreferrer");
     }
+    const handleViewInspectionReport = () => {
+        window.open(row.inspectionReport, "_blank", "noreferrer");
+    }
 
     const handleSubmitRequest = async () => {
         const sDate = new Date(booked.startDate);
@@ -849,6 +852,32 @@ function Row(props) {
                                 }
                             </div>
                         </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Inspection Report</p>
+                            <div className='flex gap-4'>
+                                {row.inspectionReport ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewInspectionReport} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewInspectionReport} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Inspection report Not Found</span>
+                                    </>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
@@ -992,84 +1021,51 @@ export default function EnhancedTable(props) {
     const startDate = props.startDate;
     const endDate = props.endDate;
 
-    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/1900", 'DD/MM/YYYY'), endDate = dayjs()) => {
-
-
+    const searchFunc = (query, clubName, catName, startDate = 0, endDate = Date.now()) => {
         var results = data.filter((item) => {
             return item.name.toLowerCase().includes(query.toLowerCase());
         });
 
-
         if (typeof clubName === "object" && clubName.length !== 0) {
-
-            console.log(clubName);
-
             results = results.filter((item) => {
-                var flag = 0;
                 for (let j = 0; j < clubName.length; j++) {
-                    var element = clubName[j].toLowerCase();
-                    if (item.ownedBy.toLowerCase() === element) {
-                        flag = 1;
-                    }
-                    else if (item.heldBy.toLowerCase() === element) {
-                        flag = 1;
+                    const element = clubName[j].toLowerCase();
+                    if ((item.ownedBy.toLowerCase() === element) || (item.heldBy.toLowerCase() === element)) {
+                        return true;
                     }
                 }
-                if (flag === 1) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return false;
             });
         }
-
-
-        // console.log(results);
-
 
         if (typeof catName === "object" && catName.length !== 0) {
 
             results = results.filter((item) => {
-                var flag = 0;
                 for (let j = 0; j < catName.length; j++) {
-                    var element = catName[j].toLowerCase();
+                    const element = catName[j].toLowerCase();
                     if (item.category.toLowerCase() === element) {
-                        flag = 1;
+                        return true;
                     }
                 }
-                if (flag === 1) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return false;
             });
         }
 
-
-        if (typeof (startDate) === 'object' && typeof (endDate) === 'object') {
+        if (typeof (startDate) === 'number' && typeof (endDate) === 'number') {
 
             results = results.filter((item) => {
-
-
-                var date_of_purchase2 = (item.purchasedOn);
-                console.log(typeof (date_of_purchase2));
-
-                if ((typeof (date_of_purchase2) === 'number' && date_of_purchase2 >= startDate && date_of_purchase2 <= endDate) || (typeof (date_of_purchase2) === 'undefined')) {
+                if (startDate <= item.purchasedOn && item.purchasedOn <= endDate) {
                     return true;
                 } else {
                     return false;
                 }
-
             });
-
         }
-
         return results;
 
     };
 
     var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
-
 
     return (
         <ThemeProvider theme={theme}>

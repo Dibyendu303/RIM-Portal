@@ -54,7 +54,7 @@ const Wrap = styled.div`
 `;
 
 function Filter(props) {
-  const { startDate, setStartDate, endDate, setEndDate, clubName, setClubName, catName, setCatName } = props;
+  const { setStartDate, setEndDate, clubName, setClubName, catName, setCatName } = props;
   return (
     <Wrap>
       <FilterHead>Filters</FilterHead>

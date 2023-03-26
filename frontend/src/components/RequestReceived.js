@@ -8,8 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-// import Typography from '@mui/material/Typography';
-// import { Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
@@ -18,11 +16,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import tableData from '../data/Mock3.json';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -309,9 +305,6 @@ function Row(props) {
         let Days = Math.floor(numberOfHours / 24);
         let Remainder = numberOfHours % 24;
         let Hours = Math.floor(Remainder);
-        let Minutes = Math.floor(60 * (Remainder - Hours));
-
-
         let output = "";
         if (Days > 0) {
             output = Days;
@@ -421,7 +414,7 @@ function Row(props) {
 }
 
 export default function RequestReceived(props) {
-    const { user, data, setData } = props;
+    const { data, setData } = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 

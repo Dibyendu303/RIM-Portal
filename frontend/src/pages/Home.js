@@ -91,6 +91,8 @@ const Home = (props) => {
                 navigate('/login');
             }, 2000);
         }
+
+        //eslint-disable-next-line
     }, []);
 
     const vertical = 'top'
@@ -110,7 +112,7 @@ const Home = (props) => {
             </Snackbar>
             <Navbar data={data} setData={setData} onQuery={setQuery} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
-                <Filter startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} clubName={clubName} setClubName={setClubName} catName={catName} setCatName={setCatName}></Filter>
+                <Filter setStartDate={setStartDate} setEndDate={setEndDate} clubName={clubName} setClubName={setClubName} catName={catName} setCatName={setCatName}></Filter>
                 <EnhancedTable data={data} setData={setData} user={user} query={query} clubName={clubName} catName={catName} startDate={startDate} endDate={endDate}></EnhancedTable>
             </div>
         </div>

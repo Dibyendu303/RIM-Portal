@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import EnhancedTable from '../components/EnhancedTable';
-import Filter from '../components/filter/Filter.jsx'
+import Filter from '../components/filter/filter.jsx'
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';

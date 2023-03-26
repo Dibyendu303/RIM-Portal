@@ -42,7 +42,7 @@ module.exports.acceptRequest = async (req, res) => {
         // newTime = {Start : "2016-05-18T16:00:00Z", End: "2016-05-18T16:00:00Z"}  //Example
         const item = await Item.findOneAndUpdate(
             { _id: targetRequest.itemId },
-            { "heldBy": targetRequest.requestedBy, "status": "bcd", $push: { "occupiedTime": newTime } }
+            { "status": "bcd", $push: { "occupiedTime": newTime } }
         );
         res.json({
             item: item,

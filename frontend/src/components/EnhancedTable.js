@@ -992,13 +992,12 @@ export default function EnhancedTable(props) {
     const startDate = props.startDate;
     const endDate = props.endDate;
 
-    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/2014", 'DD/MM/YYYY'), endDate = dayjs()) => {
-        // if(query !== ''){
-        // var _ = require('underscore');
+    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/1900", 'DD/MM/YYYY'), endDate = dayjs()) => {
+
+
         var results = data.filter((item) => {
             return item.name.toLowerCase().includes(query.toLowerCase());
         });
-        // console.log(typeof(results));
 
 
         if (typeof clubName === "object" && clubName.length !== 0) {
@@ -1047,25 +1046,23 @@ export default function EnhancedTable(props) {
         }
 
 
-        // if(typeof(startDate) === 'object' && typeof(endDate) === 'object'){
+        if (typeof (startDate) === 'object' && typeof (endDate) === 'object') {
 
-        //   results = results.filter((item) => {
+            results = results.filter((item) => {
 
 
-        //     var date_of_purchase2 = (item.purchaseDate.slice(10,20));
-        //     var date_of_purchase = dayjs(date_of_purchase2, 'DD/MM/YYYY');
+                var date_of_purchase2 = (item.purchasedOn);
+                console.log(typeof (date_of_purchase2));
 
-        //     if (date_of_purchase.isBetween(startDate, endDate, null, '[]')) {
-        //       return true;
-        //     } else {
-        //       return false;
-        //     }
+                if ((typeof (date_of_purchase2) === 'number' && date_of_purchase2 >= startDate && date_of_purchase2 <= endDate) || (typeof (date_of_purchase2) === 'undefined')) {
+                    return true;
+                } else {
+                    return false;
+                }
 
-        //   });
+            });
 
-        // }
-
-        // console.log(results);
+        }
 
         return results;
 

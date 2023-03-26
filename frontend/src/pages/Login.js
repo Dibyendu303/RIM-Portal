@@ -35,7 +35,7 @@ const Login = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [dirty, setDirty] = useState(false);
-    const { user, setUser } = props;
+    const { setUser } = props;
     const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
@@ -95,6 +95,8 @@ const Login = (props) => {
         if (token) {
             validateToken(token);
         }
+
+        //eslint-disable-next-line
     }, []);
 
 

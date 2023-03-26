@@ -304,6 +304,26 @@ function Row(props) {
         }
     }
 
+    const formatDuration = (data) => {
+        const numberOfHours = Math.ceil(data / (3600 * 1000));
+        let Days = Math.floor(numberOfHours / 24);
+        let Remainder = numberOfHours % 24;
+        let Hours = Math.floor(Remainder);
+        let Minutes = Math.floor(60 * (Remainder - Hours));
+
+
+        let output = "";
+        if (Days > 0) {
+            output = Days;
+            output += (Days === 1) ? " Day " : " Days ";
+        }
+        if (Hours > 0) {
+            output += Hours;
+            output += (Hours === 1) ? " Hour " : " Hours ";
+        }
+        return output;
+    }
+
     const vertical = 'top'
     const horizontal = 'center';
 
@@ -320,7 +340,7 @@ function Row(props) {
                 <TableCell align="left">{row.category}</TableCell>
                 <TableCell align="left">{row.requestedBy}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="center">{row.quantity}</TableCell>
+                <TableCell align="center">{formatDuration(row.outTime - row.inTime)}</TableCell>
                 <TableCell align="left"><p className={`italic font-medium ${row.requestStatus === 'Pending' ? "text-gray-500" : (row.requestStatus === 'Approved' ? "text-green-500" : "text-red-500")}`}>{row.requestStatus}</p></TableCell>
                 <TableCell >
                     <IconButton
@@ -436,6 +456,11 @@ export default function RequestReceived(props) {
                         </Table>
                     </TableContainer>
                 </Paper>
+                {data.length === 0 ?
+                    <>
+                        <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
+                    </>
+                    : ""}
             </Box>
         </ThemeProvider>
     );

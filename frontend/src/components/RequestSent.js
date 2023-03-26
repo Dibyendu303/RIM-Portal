@@ -366,6 +366,11 @@ export default function RequestSent(props) {
                         </Table>
                     </TableContainer>
                 </Paper>
+                {data.length === 0 ?
+                    <>
+                        <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
+                    </>
+                    : ""}
             </Box>
         </ThemeProvider>
     );

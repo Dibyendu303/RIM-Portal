@@ -8,10 +8,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 const theme = createTheme({
-    typography: {
-      fontSize: 12,
-    },
-  });
+  typography: {
+    fontSize: 12,
+  },
+});
 
 const FilterContent = styled.div`
 
@@ -62,21 +62,21 @@ function Filter(props) {
   const [clubName, setClubName] = useState("");
   const [catName, setCatName] = useState("");
 
-  props.startDate(startDate);
-  props.endDate(endDate);
-  props.clubName(clubName);
-  props.catName(catName);
+  // props.startDate(startDate);
+  // props.endDate(endDate);
+  // props.clubName(clubName);
+  // props.catName(catName);
 
   return (
     <Wrap>
-        <FilterHead>Filters</FilterHead>
-        <ThemeProvider theme = {theme}>
-            <FilterContent>
-                <ClubSelect clubName = {setClubName} />
-                <CategorySelect catName = {setCatName} />
-                <DayTime startDate = {setStartDate} endDate = {setEndDate} />
-            </FilterContent>
-        </ThemeProvider>
+      <FilterHead>Filters</FilterHead>
+      <ThemeProvider theme={theme}>
+        <FilterContent>
+          <ClubSelect clubName={setClubName} />
+          <CategorySelect catName={setCatName} />
+          <DayTime startDate={setStartDate} endDate={setEndDate} />
+        </FilterContent>
+      </ThemeProvider>
     </Wrap>
   );
 }

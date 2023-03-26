@@ -30,10 +30,13 @@ function Navbar(props) {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState(dayjs());
   const [ownedBy, setOwnedBy] = useState('');
-  const [category, setCategory] = useState('');
   const [itemName, setItemName] = useState('');
+  const [category, setCategory] = useState('');
   const [remarks, setRemarks] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [pageNo, setPageNo] = useState('');
+  const [serialNo, setSerialNo] = useState('');
+  const [registerNo, setRegisterNo] = useState('');
   const text = props.textContent;
   const navigate = useNavigate();
   const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
@@ -78,7 +81,7 @@ function Navbar(props) {
     setOpenAddModal(false);
   };
 
-  function filter(e){
+  function filter(e) {
     props.onQuery(e.target.value);
   }
 
@@ -98,7 +101,11 @@ function Navbar(props) {
     };
     console.log(options);
     try {
-      axios.post("http://localhost:8080/item", options).then((res) => {
+      axios.post("http://localhost:8080/item", options, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
         console.log(res.data);
         const newItem = res.data.item;
         const newData = [...data, newItem];
@@ -195,7 +202,7 @@ function Navbar(props) {
                 <TextField id="quantity" label="Quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
                 <DateTimePicker
                   renderInput={(props) => <TextField {...props} />}
-                  label="Purchase Date"
+                  label="Bill Date"
                   value={purchaseDate}
                   onChange={(newValue) => {
                     setPurchaseDate(newValue);
@@ -239,19 +246,15 @@ function Navbar(props) {
                 </Select>
               </FormControl>
             </div>
-            <div className='grid grid-cols-3 gap-8'>
-              <div>
-                <p className='font-medium'>Bill</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
-              </div>
+            <div className='flex justify-between gap-4'>
               <div>
                 <p className='font-medium'>Sanction letter</p>
+                <input type="file" name="bill" id="bill" />
+              </div>
+              {/* <div>
                 <Button variant="outlined" component="label" fullWidth>
                   Upload
-                  <input hidden accept="image/*" multiple type="file" />
+                  <input type="file" />
                 </Button>
               </div>
               <div>
@@ -260,6 +263,28 @@ function Navbar(props) {
                   Upload
                   <input hidden accept="image/*" multiple type="file" />
                 </Button>
+              </div>
+              <div>
+                <p className='font-medium'>Bill</p>
+                <Button variant="outlined" component="label">
+                  Upload
+                  <input hidden accept="image/*" multiple type="file" />
+                </Button>
+              </div>
+              <div>
+                <p className='font-medium'>Inspection Report</p>
+                <Button variant="outlined" component="label" fullWidth>
+                  Upload
+                  <input hidden accept="image/*" multiple type="file" />
+                </Button>
+              </div> */}
+            </div>
+            <div>
+              <p className='font-medium'>Stockbook details:</p>
+              <div className="grid grid-cols-3 gap-8 mt-2">
+                <TextField id="registerNo" label="Register No" variant="outlined" value={registerNo} onChange={(e) => setRegisterNo(e.target.value)} />
+                <TextField id="pageNo" label="Page No" variant="outlined" value={pageNo} onChange={(e) => setPageNo(e.target.value)} />
+                <TextField id="serialNo" label="Serial No" variant="outlined" value={serialNo} onChange={(e) => setSerialNo(e.target.value)} />
               </div>
             </div>
             {/* <TextField required id="remarks" label="Quantity" variant="outlined" /> */}

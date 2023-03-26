@@ -10,6 +10,7 @@ const itemSchema = new mongoose.Schema({
     "bill": String,
     "sanctionLetter": String,
     "purchaseOrder": String,
+    "inspectionReport": String,
     "status": String,
     "remarks": String,
     "occupiedTime": [

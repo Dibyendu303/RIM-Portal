@@ -1061,12 +1061,12 @@ export default function EnhancedTable(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={searchResults.length}
+                                rowCount={data.length}
                             />
                             <TableBody>
-                                {stableSort(searchResults, getComparator(order, orderBy))
+                                {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} data={searchResults} setData={setData} user={user} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>

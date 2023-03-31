@@ -12,6 +12,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const Received = (props) => {
     const { setUser } = props;
+    const {startDate, setStartDate, endDate, setEndDate, clubName, setClubName, catName, setCatName}=props;
     const [data, setData] = useState([]);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
@@ -102,7 +103,7 @@ const Received = (props) => {
             </Snackbar>
             <Navbar textContent={"Requests - Received"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
-                <Filter></Filter>
+            <Filter setStartDate={setStartDate} setEndDate={setEndDate} clubName={clubName} setClubName={setClubName} catName={catName} setCatName={setCatName}></Filter>
                 <RequestReceived data={data} setData={setData}></RequestReceived>
             </div>
         </div>

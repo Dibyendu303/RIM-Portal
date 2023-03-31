@@ -101,6 +101,9 @@ function Navbar(props) {
       "sanctionLetter": sanctionLetter,
       "purchaseOrder": purchaseOrder,
       "inspectionReport": inspectionReport,
+      "pageNo": pageNo,
+      "serialNo": serialNo,
+      "registerNo": registerNo,
       "status": "Available",
       "remarks": remarks,
       "occupiedTime": []

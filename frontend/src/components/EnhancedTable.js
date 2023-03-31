@@ -1003,7 +1003,9 @@ export default function EnhancedTable(props) {
 
     const searchFunc = (query, clubName, catName, startDate = 0, endDate = Date.now()) => {
         var results = data.filter((item) => {
-            return item.name.toLowerCase().includes(query.toLowerCase());
+            if (item.name)
+                return item.name.toLowerCase().includes(query.toLowerCase());
+            return false;
         });
 
         if (typeof clubName === "object" && clubName.length !== 0) {
@@ -1045,7 +1047,10 @@ export default function EnhancedTable(props) {
 
     };
 
-    var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    let searchResults = [];
+    if (data.length !== 0) {
+        searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -1072,7 +1077,7 @@ export default function EnhancedTable(props) {
                         </Table>
                     </TableContainer>
                 </Paper>
-                {data.length === 0 ?
+                {searchResults.length === 0 ?
                     <>
                         <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
                     </>

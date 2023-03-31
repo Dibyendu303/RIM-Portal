@@ -69,16 +69,16 @@ app.post('/login', async (req, res) => {
         console.log("error");
         return res.status(500).send(err);
     }
-    const accessToken = jwt.sign(user1, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+    const accessToken = jwt.sign(user1, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
     // res.cookie('jwt', accessToken, {httpOnly: true});
 
     res.status(200).json({ jwt: accessToken, result: "Success", user: user._id });
 });
 
-app.get('logout', (req, res) => {
-    res.cookie('jwt', '', { maxAge: 30 * 24 * 60 * 60 });
-    res.redirect('/login');
-})
+// app.get('logout', (req, res) => {
+//     res.cookie('jwt', '', { maxAge: 30 * 24 * 60 * 60 });
+//     res.redirect('/login');
+// })
 app.post('/checkToken', (req, res) => {
     try {
         const token = req.body.jwt;

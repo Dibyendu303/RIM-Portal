@@ -359,7 +359,7 @@ function Row(props) {
                     </Snackbar>
                     <Snackbar open={openErrorMsg} autoHideDuration={6000} onClose={handleCloseErrorMsg} anchorOrigin={{ vertical, horizontal }}>
                         <Alert onClose={handleCloseErrorMsg} severity="error" sx={{ width: '100%' }}>
-                            Unable to delete request. Please try again later!
+                            Unable to process request. Please try again later!
                         </Alert>
                     </Snackbar>
                     <Snackbar open={openNetworkErrorMsg} autoHideDuration={6000} onClose={handleCloseNetworkErrorMsg} anchorOrigin={{ vertical, horizontal }}>

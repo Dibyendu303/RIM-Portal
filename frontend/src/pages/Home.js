@@ -6,8 +6,6 @@ import Filter from '../components/filter/Filter.jsx'
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { Button } from '@mui/material';
-import dayjs from 'dayjs';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -19,10 +17,10 @@ const Home = (props) => {
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
     const [query, setQuery] = useState("");
-    const [startDate, setStartDate] = useState(dayjs("01/03/2023", 'DD/MM/YYYY'));
-    const [endDate, setEndDate] = useState(dayjs());
-    const [clubName, setClubName] = useState("");
-    const [catName, setCatName] = useState("");
+    const [startDate, setStartDate] = useState(978287400000);
+    const [endDate, setEndDate] = useState(Date.now());
+    const [clubName, setClubName] = useState([]);
+    const [catName, setCatName] = useState([]);
 
 
     const handleClickErrorMsg = () => {
@@ -93,6 +91,8 @@ const Home = (props) => {
                 navigate('/login');
             }, 2000);
         }
+
+        //eslint-disable-next-line
     }, []);
 
     const vertical = 'top'
@@ -110,10 +110,10 @@ const Home = (props) => {
                     Network error. Please try again later!
                 </Alert>
             </Snackbar>
-            <Navbar data={data} setData={setData} onQuery = {setQuery}/>
+            <Navbar data={data} setData={setData} onQuery={setQuery} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
-                <Filter startDate = {setStartDate} endDate = {setEndDate} clubName = {setClubName} catName = {setCatName}></Filter>
-                <EnhancedTable data={data} setData={setData} user={user} query = {query} clubName = {clubName} catName = {catName} startDate = {startDate} endDate = {endDate}></EnhancedTable>
+                <Filter setStartDate={setStartDate} setEndDate={setEndDate} clubName={clubName} setClubName={setClubName} catName={catName} setCatName={setCatName}></Filter>
+                <EnhancedTable data={data} setData={setData} user={user} query={query} clubName={clubName} catName={catName} startDate={startDate} endDate={endDate}></EnhancedTable>
             </div>
         </div>
     )

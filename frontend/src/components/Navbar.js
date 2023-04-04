@@ -1,25 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import { IoSearch } from "react-icons/io5";
 import React, { useState } from 'react'
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-
+import { Link, useNavigate } from "react-router-dom";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Select, MenuItem, InputLabel, Snackbar } from '@mui/material';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import { IoSearch } from "react-icons/io5";
 import { FaAngleDown } from "react-icons/fa";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { FaTrashAlt } from "react-icons/fa";
 import axios from 'axios';
-import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Input from "./Input";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -30,14 +22,23 @@ function Navbar(props) {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState(dayjs());
   const [ownedBy, setOwnedBy] = useState('');
-  const [category, setCategory] = useState('');
   const [itemName, setItemName] = useState('');
+  const [category, setCategory] = useState('');
   const [remarks, setRemarks] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [pageNo, setPageNo] = useState('');
+  const [serialNo, setSerialNo] = useState('');
+  const [registerNo, setRegisterNo] = useState('');
   const text = props.textContent;
   const navigate = useNavigate();
   const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
   const [openErrorMsg, setOpenErrorMsg] = useState(false);
+
+  const [bill, setBill] = useState(null);
+  const [sanctionLetter, setSanctionLetter] = useState(null);
+  const [purchaseOrder, setPurchaseOrder] = useState(null);
+  const [inspectionReport, setInspectionReport] = useState(null);
+  const [formValues, setFormValues] = useState([]);
 
   const handleClickSuccessMsg = () => {
     setOpenSuccessMsg(true);
@@ -78,46 +79,85 @@ function Navbar(props) {
     setOpenAddModal(false);
   };
 
-  function filter(e){
+  function filter(e) {
     props.onQuery(e.target.value);
   }
 
   const handleSubmit = async () => {
+    const lastItem = {
+      itemName: itemName,
+      category: category,
+      quantity: quantity,
+    }
+    const itemArr = [...formValues, lastItem];
     const options = {
-      "name": itemName,
-      "category": category,
-      "ownedBy": ownedBy,
+      "itemArr": itemArr,
+      // "name": itemName,
+      // "category": category,
+      // "ownedBy": ownedBy,
       "quantity": quantity,
       "purchasedOn": purchaseDate.toDate().getTime(),
-      "bill": "",
-      "sanctionLetter": "",
-      "purchaseOrder": "",
+      "bill": bill,
+      "sanctionLetter": sanctionLetter,
+      "purchaseOrder": purchaseOrder,
+      "inspectionReport": inspectionReport,
       "status": "Available",
       "remarks": remarks,
       "occupiedTime": []
     };
     console.log(options);
     try {
-      axios.post("http://localhost:8080/item", options).then((res) => {
-        console.log(res.data);
-        const newItem = res.data.item;
-        const newData = [...data, newItem];
-        setData(newData);
-        handleCloseAddModal();
-        handleClickSuccessMsg();
-        // alert('Item added successfully');
-      }).catch((e) => {
-        handleCloseAddModal();
-        handleClickErrorMsg();
-        // alert('Unable to add item. Please try again later');
+      alert("Backend not updated yet");
+      // axios.post("http://localhost:8080/item", options, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // }).then((res) => {
+      //   console.log(res.data);
+      //   const newItem = res.data.item;
+      //   const newData = [...data, newItem];
+      //   setData(newData);
+      //   handleCloseAddModal();
+      //   handleClickSuccessMsg();
+      //   // alert('Item added successfully');
+      // }).catch((e) => {
+      //   handleCloseAddModal();
+      //   handleClickErrorMsg();
+      //   // alert('Unable to add item. Please try again later');
 
-      });
+      // });
     }
     catch (e) {
       handleCloseAddModal();
       handleClickErrorMsg();
       // alert('Unable to add item. Please try again later');
     }
+  }
+
+  const onChangeHandler = (e, index) => {
+    const values = [...formValues];
+    values[index][e.target.name] = e.target.value;
+    console.log(values);
+    setFormValues(values);
+  };
+
+  const handleAddField = () => {
+    const values = [...formValues];
+    values.push({
+      itemName: itemName,
+      category: category,
+      quantity: quantity
+    });
+    setItemName("");
+    setQuantity("");
+    setCategory("");
+    setFormValues(values);
+  };
+
+  const deleteItemField = (index) => {
+    const values = [...formValues];
+    values.splice(index, 1);
+    setFormValues(values);
   }
 
   const handleLogout = () => {
@@ -184,49 +224,25 @@ function Navbar(props) {
           <div className='text-2xl'>Add an Item</div>
         </DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
-                        To subscribe to this website, please enter your email address here. We
-                        will send updates occasionally.
-                    </DialogContentText> */}
           <div className='mt-8 flex flex-col gap-8'>
-            <TextField id="item-name" label="Item Name" variant="outlined" value={itemName} onChange={(e) => setItemName(e.target.value)} />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className='grid grid-cols-2 gap-8'>
-                <TextField id="quantity" label="Quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                <DateTimePicker
-                  renderInput={(props) => <TextField {...props} />}
-                  label="Purchase Date"
-                  value={purchaseDate}
-                  onChange={(newValue) => {
-                    setPurchaseDate(newValue);
-                  }}
-                />
-              </div>
-            </LocalizationProvider>
+            {formValues.map((obj, index) => (
+              <>
+                <div className='flex justify-between'>
+                  <p className='font-medium'>{`Item ${index + 1}`}</p>
+                  <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => deleteItemField(index)}>Delete item <FaTrashAlt /></div>
+                </div>
+                <Input key={index} index={index} objValue={obj} onChangeHandler={onChangeHandler} />
+              </>
+            ))}
+            <p className='font-medium'>{`Item ${formValues.length + 1}`}</p>
+            <TextField id="item-name" label="Item Name" name="itemName" variant="outlined" value={itemName} onChange={(e) => setItemName(e.target.value)} />
             <div className='grid grid-cols-2 gap-8'>
-              <FormControl fullWidth>
-                <InputLabel id="owned-by">Owned By</InputLabel>
-                <Select
-                  id="owned-by"
-                  value={ownedBy}
-                  label="Owned By"
-                  onChange={handleOwnership}
-                >
-                  <MenuItem value={"Coding Club"}>Coding Club</MenuItem>
-                  <MenuItem value={"Design Club"}>Design Club</MenuItem>
-                  <MenuItem value={"Electronics Club"}>Electronics Club</MenuItem>
-                  <MenuItem value={"Robotics Club"}>Robotics Club</MenuItem>
-                  <MenuItem value={"Consulting & Analytics"}>Consulting & Analytics</MenuItem>
-                  <MenuItem value={"E-Cell"}>E-Cell</MenuItem>
-                  <MenuItem value={"Aeromodelling Club"}>Aeromodelling Club</MenuItem>
-                  <MenuItem value={"IITG.Ai Club"}>IITG.Ai Club</MenuItem>
-                  <MenuItem value={"Automobile Club"}>Automobile Club</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField id="quantity" label="Quantity" name="quantity" variant="outlined" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
               <FormControl fullWidth>
                 <InputLabel id="category">Category</InputLabel>
                 <Select
                   id="category"
+                  name="category"
                   value={category}
                   label="Category"
                   onChange={handleCategory}
@@ -239,27 +255,56 @@ function Navbar(props) {
                 </Select>
               </FormControl>
             </div>
-            <div className='grid grid-cols-3 gap-8'>
-              <div>
-                <p className='font-medium'>Bill</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
+            <div className="flex justify-end">
+              <div className="flex cursor-pointer text-blue-600 hover:underline w-fit items-center gap-2 text-base" onClick={handleAddField}>Add more item <AiOutlinePlusCircle /></div>
+            </div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className='grid grid-cols-2 gap-8'>
+                <FormControl fullWidth>
+                  <InputLabel id="owned-by">Owned By</InputLabel>
+                  <Select
+                    id="owned-by"
+                    value={ownedBy}
+                    label="Owned By"
+                    onChange={handleOwnership}
+                  >
+                    <MenuItem value={"Coding Club"}>Coding Club</MenuItem>
+                    <MenuItem value={"Design Club"}>Design Club</MenuItem>
+                    <MenuItem value={"Electronics Club"}>Electronics Club</MenuItem>
+                    <MenuItem value={"Robotics Club"}>Robotics Club</MenuItem>
+                    <MenuItem value={"Consulting & Analytics"}>Consulting & Analytics</MenuItem>
+                    <MenuItem value={"E-Cell"}>E-Cell</MenuItem>
+                    <MenuItem value={"Aeromodelling Club"}>Aeromodelling Club</MenuItem>
+                    <MenuItem value={"IITG.Ai Club"}>IITG.Ai Club</MenuItem>
+                    <MenuItem value={"Automobile Club"}>Automobile Club</MenuItem>
+                  </Select>
+                </FormControl>
+                <DateTimePicker
+                  renderInput={(props) => <TextField {...props} />}
+                  label="Bill Date"
+                  value={purchaseDate}
+                  onChange={(newValue) => {
+                    setPurchaseDate(newValue);
+                  }}
+                />
               </div>
-              <div>
-                <p className='font-medium'>Sanction letter</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
-              </div>
-              <div>
-                <p className='font-medium'>Purchase order</p>
-                <Button variant="outlined" component="label" fullWidth>
-                  Upload
-                  <input hidden accept="image/*" multiple type="file" />
-                </Button>
+            </LocalizationProvider>
+            <div className='grid grid-cols-3 gap-4 items-center'>
+              <p className='font-medium'>Sanction letter:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="sanctionLetter" id="sanctionLetter" onChange={(e) => setSanctionLetter(e.target.files[0])} />
+              <p className='font-medium'>Purchase Order:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="purchaseOrder" id="purchaseOrder" onChange={(e) => setPurchaseOrder(e.target.files[0])} />
+              <p className='font-medium'>Bill:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="bill" id="bill" onChange={(e) => setBill(e.target.files[0])} />
+              <p className='font-medium'>Inspection Report:</p>
+              <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="inspectionReport" id="inspectionReport" onChange={(e) => setInspectionReport(e.target.files[0])} />
+            </div>
+            <div>
+              <p className='font-medium'>Stockbook details:</p>
+              <div className="grid grid-cols-3 gap-8 mt-2">
+                <TextField id="registerNo" label="Register No" variant="outlined" value={registerNo} onChange={(e) => setRegisterNo(e.target.value)} />
+                <TextField id="pageNo" label="Page No" variant="outlined" value={pageNo} onChange={(e) => setPageNo(e.target.value)} />
+                <TextField id="serialNo" label="Serial No" variant="outlined" value={serialNo} onChange={(e) => setSerialNo(e.target.value)} />
               </div>
             </div>
             {/* <TextField required id="remarks" label="Quantity" variant="outlined" /> */}

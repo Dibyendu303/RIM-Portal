@@ -8,8 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-// import Typography from '@mui/material/Typography';
-// import { Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
@@ -18,11 +16,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import tableData from '../data/Mock3.json';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -304,6 +300,23 @@ function Row(props) {
         }
     }
 
+    const formatDuration = (data) => {
+        const numberOfHours = Math.ceil(data / (3600 * 1000));
+        let Days = Math.floor(numberOfHours / 24);
+        let Remainder = numberOfHours % 24;
+        let Hours = Math.floor(Remainder);
+        let output = "";
+        if (Days > 0) {
+            output = Days;
+            output += (Days === 1) ? " Day " : " Days ";
+        }
+        if (Hours > 0) {
+            output += Hours;
+            output += (Hours === 1) ? " Hour " : " Hours ";
+        }
+        return output;
+    }
+
     const vertical = 'top'
     const horizontal = 'center';
 
@@ -320,7 +333,7 @@ function Row(props) {
                 <TableCell align="left">{row.category}</TableCell>
                 <TableCell align="left">{row.requestedBy}</TableCell>
                 <TableCell align="center">{row.quantity}</TableCell>
-                <TableCell align="center">{row.quantity}</TableCell>
+                <TableCell align="center">{formatDuration(row.outTime - row.inTime)}</TableCell>
                 <TableCell align="left"><p className={`italic font-medium ${row.requestStatus === 'Pending' ? "text-gray-500" : (row.requestStatus === 'Approved' ? "text-green-500" : "text-red-500")}`}>{row.requestStatus}</p></TableCell>
                 <TableCell >
                     <IconButton
@@ -401,7 +414,7 @@ function Row(props) {
 }
 
 export default function RequestReceived(props) {
-    const { user, data, setData } = props;
+    const { data, setData } = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -436,6 +449,11 @@ export default function RequestReceived(props) {
                         </Table>
                     </TableContainer>
                 </Paper>
+                {data.length === 0 ?
+                    <>
+                        <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
+                    </>
+                    : ""}
             </Box>
         </ThemeProvider>
     );

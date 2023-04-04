@@ -1,27 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
+import { Box, Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Button, Paper, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, InputLabel, MenuItem, FormControl, Snackbar, Collapse } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import { Button } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
-import Collapse from '@mui/material/Collapse';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { KeyboardArrowDown as KeyboardArrowDownIcon, KeyboardArrowUp as KeyboardArrowUpIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -30,9 +14,9 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { IoClose } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
 import { FaTrashAlt } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import axios from 'axios';
-
-import Snackbar from '@mui/material/Snackbar';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -190,6 +174,9 @@ EnhancedTableHead.propTypes = {
 function Row(props) {
     const { row, index, data, setData, user } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
+    const [purchaseDate, setPurchaseDate] = useState(dayjs());
+    const [ownedBy, setOwnedBy] = useState('');
+    const [itemName, setItemName] = useState('');
     const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
     const [startDate, setStartDate] = useState(dayjs());
@@ -200,11 +187,19 @@ function Row(props) {
     const [errorRange, setErrorRange] = useState(false);
     const [invalidDate, setInvalidDate] = useState(false);
     const [openDownload, setOpenDownload] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
     const [remarks, setRemarks] = useState('');
     const [quantity, setQuantity] = useState('');
-
+    const [editRemarks, setEditRemarks] = useState('');
+    const [editQuantity, setEditQuantity] = useState('');
+    const [pageNo, setPageNo] = useState('');
+    const [serialNo, setSerialNo] = useState('');
+    const [registerNo, setRegisterNo] = useState('');
+    const [category, setCategory] = useState('');
     const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
+    const [openEditSuccessMsg, setOpenEditSuccessMsg] = useState(false);
+    const [openEditErrorMsg, setOpenEditErrorMsg] = useState(false);
     const [openRequestSuccessMsg, setOpenRequestSuccessMsg] = useState(false);
     const [openRequestErrorMsg, setOpenRequestErrorMsg] = useState(false);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
@@ -231,6 +226,30 @@ function Row(props) {
         }
 
         setOpenErrorMsg(false);
+    };
+
+    const handleClickEditSuccessMsg = () => {
+        setOpenEditSuccessMsg(true);
+    };
+
+    const handleCloseEditSuccessMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenEditSuccessMsg(false);
+    };
+
+    const handleClickEditErrorMsg = () => {
+        setOpenEditErrorMsg(true);
+    };
+
+    const handleCloseEditErrorMsg = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenEditErrorMsg(false);
     };
     const handleClickRequestSuccessMsg = () => {
         setOpenRequestSuccessMsg(true);
@@ -267,7 +286,20 @@ function Row(props) {
         setOpenNetworkErrorMsg(false);
     };
 
+    const handleOwnership = (event) => {
+        setOwnedBy(event.target.value);
+    };
+    const handleCategory = (event) => {
+        setCategory(event.target.value);
+    };
 
+    const handleClickEditModal = () => {
+        setOpenEditModal(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setOpenEditModal(false);
+    };
     const handleClickDownload = () => {
         setOpenDownload(true);
     };
@@ -419,11 +451,39 @@ function Row(props) {
             console.log("Remove item request cancelled");
         }
     }
+    const handleSubmitEditModal = (id) => {
+        try {
+            // const options = { "ID": id };
+            // console.log(options);
+
+            // axios.delete("http://localhost:8080/item", {
+            //     headers: {
+            //         Authorization: "usertoken"
+            //     },
+            //     data: {
+            //         "ID": id
+            //     }
+            // })
+            //     .then((res) => {
+            //         const newData = data.filter(el => el._id !== id);
+            //         setData(newData);
+            //         handleClickEditSuccessMsg();
+            //     }).catch((e) => {
+            //          handleClickEditErrorMsg();
+            //         // alert('Unable to delete item. Please try again later');
+            //     });
+        }
+        catch (e) {
+            handleClickNetworkErrorMsg();
+        }
+    }
 
     useEffect(() => {
         const flag = isValidRange();
         setErrorRange(flag);
         // console.log("Range is: " + flag);
+
+        // eslint-disable-next-line
     }, [booked])
 
     const handleCloseRequest = () => {
@@ -440,6 +500,9 @@ function Row(props) {
     }
     const handleViewPurchaseOrder = () => {
         window.open(row.purchaseOrder, "_blank", "noreferrer");
+    }
+    const handleViewInspectionReport = () => {
+        window.open(row.inspectionReport, "_blank", "noreferrer");
     }
 
     const handleSubmitRequest = async () => {
@@ -525,6 +588,16 @@ function Row(props) {
                             Unable to delete item. Please try again later!
                         </Alert>
                     </Snackbar>
+                    <Snackbar open={openEditSuccessMsg} autoHideDuration={6000} onClose={handleCloseEditSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseEditSuccessMsg} severity="success" sx={{ width: '100%' }}>
+                            Item updated successfully!
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={openEditErrorMsg} autoHideDuration={6000} onClose={handleCloseEditErrorMsg} anchorOrigin={{ vertical, horizontal }}>
+                        <Alert onClose={handleCloseEditErrorMsg} severity="error" sx={{ width: '100%' }}>
+                            Unable to edit item. Please try again later!
+                        </Alert>
+                    </Snackbar>
                     <Snackbar open={openRequestSuccessMsg} autoHideDuration={6000} onClose={handleCloseRequestSuccessMsg} anchorOrigin={{ vertical, horizontal }}>
                         <Alert onClose={handleCloseRequestSuccessMsg} severity="success" sx={{ width: '100%' }}>
                             Request submitted successfully!
@@ -552,9 +625,14 @@ function Row(props) {
                                     <span className='font-medium mr-4'>Purchased On : </span>
                                     <span> {formatDate(row.purchasedOn)}</span>
                                 </div>
-                                <div>
-                                    <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>
-                                </div>
+                                {(user?.club === row.ownedBy) ?
+                                    <>
+                                        <div className='flex gap-8'>
+                                            <div className="cursor-pointer text-red-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleRemoveItem(row._id)}>Remove item <FaTrashAlt /></div>
+                                            <div className="cursor-pointer text-blue-600 hover:underline flex w-fit items-center gap-2" onClick={() => handleClickEditModal()}>Edit item <FaEdit /></div>
+                                        </div>
+                                    </>
+                                    : ""}
                             </div>
                             <div className="flex flex-col gap-6 w-3/4 items-end">
                                 <Button variant="contained" className='w-24' onClick={handleClickOpenRequest}>Request</Button>
@@ -754,10 +832,154 @@ function Row(props) {
                                 }
                             </div>
                         </div>
+                        <div className='flex justify-between items-center gap-24'>
+                            <p className='text-2xl'>Inspection Report</p>
+                            <div className='flex gap-4'>
+                                {row.inspectionReport ?
+                                    <>
+                                        <Button variant="outlined" onClick={handleViewInspectionReport} style={{
+                                            // backgroundColor: "#021018",
+                                            color: "#021018",
+                                            border: "1px solid #021018",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>View</Button>
+                                        <Button variant="contained" onClick={handleViewInspectionReport} style={{
+                                            backgroundColor: "#021018",
+                                            color: "white",
+                                            padding: "0.5rem 2rem",
+                                            // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                                        }}>Download</Button>
+                                    </>
+                                    :
+                                    <>
+                                        <span className='text-lg'>Inspection report Not Found</span>
+                                    </>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
-        </React.Fragment>
+            <Dialog open={openEditModal} onClose={handleCloseEditModal}>
+                <DialogTitle className='bg-[#032538] text-white'>
+                    <div className='text-2xl'>Add an Item</div>
+                </DialogTitle>
+                <DialogContent>
+                    {/* <DialogContentText>
+                        To subscribe to this website, please enter your email address here. We
+                        will send updates occasionally.
+                    </DialogContentText> */}
+                    <div className='mt-8 flex flex-col gap-8'>
+                        <TextField id="item-name" label="Item Name" variant="outlined" value={itemName} onChange={(e) => setItemName(e.target.value)} />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <div className='grid grid-cols-2 gap-8'>
+                                <TextField id="quantity" label="Quantity" variant="outlined" value={editQuantity} onChange={(e) => setEditQuantity(e.target.value)} />
+                                <DateTimePicker
+                                    renderInput={(props) => <TextField {...props} />}
+                                    label="Bill Date"
+                                    value={purchaseDate}
+                                    onChange={(newValue) => {
+                                        setPurchaseDate(newValue);
+                                    }}
+                                />
+                            </div>
+                        </LocalizationProvider>
+                        <div className='grid grid-cols-2 gap-8'>
+                            <FormControl fullWidth>
+                                <InputLabel id="owned-by">Owned By</InputLabel>
+                                <Select
+                                    id="owned-by"
+                                    value={ownedBy}
+                                    label="Owned By"
+                                    onChange={handleOwnership}
+                                >
+                                    <MenuItem value={"Coding Club"}>Coding Club</MenuItem>
+                                    <MenuItem value={"Design Club"}>Design Club</MenuItem>
+                                    <MenuItem value={"Electronics Club"}>Electronics Club</MenuItem>
+                                    <MenuItem value={"Robotics Club"}>Robotics Club</MenuItem>
+                                    <MenuItem value={"Consulting & Analytics"}>Consulting & Analytics</MenuItem>
+                                    <MenuItem value={"E-Cell"}>E-Cell</MenuItem>
+                                    <MenuItem value={"Aeromodelling Club"}>Aeromodelling Club</MenuItem>
+                                    <MenuItem value={"IITG.Ai Club"}>IITG.Ai Club</MenuItem>
+                                    <MenuItem value={"Automobile Club"}>Automobile Club</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <InputLabel id="category">Category</InputLabel>
+                                <Select
+                                    id="category"
+                                    value={category}
+                                    label="Category"
+                                    onChange={handleCategory}
+                                >
+                                    <MenuItem value={"Major Equipment"}>Major Equipment</MenuItem>
+                                    <MenuItem value={"Minor Equipment"}>Minor Equipment</MenuItem>
+                                    <MenuItem value={"Consumables"}>Consumables</MenuItem>
+                                    <MenuItem value={"Furniture"}>Furniture</MenuItem>
+                                    <MenuItem value={"Books"}>Books</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <div className='flex justify-between gap-4'>
+                            <div>
+                                <p className='font-medium'>Sanction letter</p>
+                                <Button variant="outlined" component="label" fullWidth>
+                                    Upload
+                                    <input hidden accept="image/*" multiple type="file" />
+                                </Button>
+                            </div>
+                            <div>
+                                <p className='font-medium'>Purchase order</p>
+                                <Button variant="outlined" component="label" fullWidth>
+                                    Upload
+                                    <input hidden accept="image/*" multiple type="file" />
+                                </Button>
+                            </div>
+                            <div>
+                                <p className='font-medium'>Bill</p>
+                                <Button variant="outlined" component="label">
+                                    Upload
+                                    <input hidden accept="image/*" multiple type="file" />
+                                </Button>
+                            </div>
+                            <div>
+                                <p className='font-medium'>Inspection Report</p>
+                                <Button variant="outlined" component="label" fullWidth>
+                                    Upload
+                                    <input hidden accept="image/*" multiple type="file" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div>
+                            <p className='font-medium'>Stockbook details:</p>
+                            <div className="grid grid-cols-3 gap-8 mt-2">
+                                <TextField id="registerNo" label="Register No" variant="outlined" value={registerNo} onChange={(e) => setRegisterNo(e.target.value)} />
+                                <TextField id="pageNo" label="Page No" variant="outlined" value={pageNo} onChange={(e) => setPageNo(e.target.value)} />
+                                <TextField id="serialNo" label="Serial No" variant="outlined" value={serialNo} onChange={(e) => setSerialNo(e.target.value)} />
+                            </div>
+                        </div>
+                        {/* <TextField required id="remarks" label="Quantity" variant="outlined" /> */}
+                        <TextField id="remarks" label="Remarks/Description" variant="outlined" value={editRemarks} onChange={(e) => setEditRemarks(e.target.value)} />
+                    </div>
+                </DialogContent>
+                <DialogActions className='m-4 flex gap-2'>
+                    <Button variant="outlined" onClick={handleCloseEditModal} style={{
+                        // backgroundColor: "#021018",
+                        color: "#021018",
+                        border: "1px solid #021018",
+                        padding: "0.5rem 2rem",
+                        // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                    }}>Cancel</Button>
+                    <Button variant="contained" onClick={() => handleSubmitEditModal(row._id)} style={{
+                        backgroundColor: "#021018",
+                        color: "white",
+                        padding: "0.5rem 2rem",
+                        // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
+                    }}>Submit</Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment >
     );
 }
 
@@ -779,87 +1001,51 @@ export default function EnhancedTable(props) {
     const startDate = props.startDate;
     const endDate = props.endDate;
 
-    const searchFunc = (query, clubName, catName, startDate = dayjs("01/03/2014", 'DD/MM/YYYY') , endDate = dayjs()) => {
-        // if(query !== ''){
-        // var _ = require('underscore');
+    const searchFunc = (query, clubName, catName, startDate = 0, endDate = Date.now()) => {
         var results = data.filter((item) => {
-          return item.name.toLowerCase().includes(query.toLowerCase());
+            return item.name.toLowerCase().includes(query.toLowerCase());
         });
-        // console.log(typeof(results));
-    
-    
-        if (typeof clubName === "object" && clubName.length !== 0) {
-    
-          console.log(clubName);
-    
-          results = results.filter((item) => {
-            var flag = 0;
-            for (let j = 0; j < clubName.length; j++) {
-              var element = clubName[j].toLowerCase();
-              if (item.ownedBy.toLowerCase() === element) {
-                flag = 1;
-              }
-              else if(item.heldBy.toLowerCase() === element){
-                flag = 1;
-              }
-            }
-            if (flag === 1) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-        }
-    
-    
-        // console.log(results);
-    
-    
-        if (typeof catName === "object" && catName.length !== 0) {
-    
-          results = results.filter((item) => {
-            var flag = 0;
-            for (let j = 0; j < catName.length; j++) {
-              var element = catName[j].toLowerCase();
-              if (item.category.toLowerCase() === element) {
-                flag = 1;
-              }
-            }
-            if (flag === 1) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-        }
-        
-    
-        // if(typeof(startDate) === 'object' && typeof(endDate) === 'object'){
-    
-        //   results = results.filter((item) => {
-    
 
-        //     var date_of_purchase2 = (item.purchaseDate.slice(10,20));
-        //     var date_of_purchase = dayjs(date_of_purchase2, 'DD/MM/YYYY');
-    
-        //     if (date_of_purchase.isBetween(startDate, endDate, null, '[]')) {
-        //       return true;
-        //     } else {
-        //       return false;
-        //     }
-    
-        //   });
-    
-        // }
-    
-        // console.log(results);
-    
+        if (typeof clubName === "object" && clubName.length !== 0) {
+            results = results.filter((item) => {
+                for (let j = 0; j < clubName.length; j++) {
+                    const element = clubName[j].toLowerCase();
+                    if ((item.ownedBy.toLowerCase() === element) || (item.heldBy.toLowerCase() === element)) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        if (typeof catName === "object" && catName.length !== 0) {
+
+            results = results.filter((item) => {
+                for (let j = 0; j < catName.length; j++) {
+                    const element = catName[j].toLowerCase();
+                    if (item.category.toLowerCase() === element) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        if (typeof (startDate) === 'number' && typeof (endDate) === 'number') {
+
+            results = results.filter((item) => {
+                if (startDate <= item.purchasedOn && item.purchasedOn <= endDate) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        }
         return results;
-    
-      };
-    
-      var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
-    
+
+    };
+
+    var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
 
     return (
         <ThemeProvider theme={theme}>
@@ -886,6 +1072,11 @@ export default function EnhancedTable(props) {
                         </Table>
                     </TableContainer>
                 </Paper>
+                {data.length === 0 ?
+                    <>
+                        <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
+                    </>
+                    : ""}
             </Box>
         </ThemeProvider>
     );

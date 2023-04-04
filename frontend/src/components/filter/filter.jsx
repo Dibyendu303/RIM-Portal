@@ -1,17 +1,15 @@
-import React, { useState } from 'react'
 import ClubSelect from './club_dropdown';
 import CategorySelect from './category_dropdown';
 import DayTime from './day_time';
-import dayjs from 'dayjs';
 import styled from "styled-components";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 const theme = createTheme({
-    typography: {
-      fontSize: 12,
-    },
-  });
+  typography: {
+    fontSize: 12,
+  },
+});
 
 const FilterContent = styled.div`
 
@@ -56,27 +54,17 @@ const Wrap = styled.div`
 `;
 
 function Filter(props) {
-
-  const [startDate, setStartDate] = useState(dayjs("01/01/2014", 'DD/MM/YYYY'));
-  const [endDate, setEndDate] = useState(dayjs());
-  const [clubName, setClubName] = useState("");
-  const [catName, setCatName] = useState("");
-
-  // props.startDate(startDate);
-  // props.endDate(endDate);
-  // props.clubName(clubName);
-  // props.catName(catName);
-
+  const { setStartDate, setEndDate, clubName, setClubName, catName, setCatName } = props;
   return (
     <Wrap>
-        <FilterHead>Filters</FilterHead>
-        <ThemeProvider theme = {theme}>
-            <FilterContent>
-                <ClubSelect clubName = {setClubName} />
-                <CategorySelect catName = {setCatName} />
-                <DayTime startDate = {setStartDate} endDate = {setEndDate} />
-            </FilterContent>
-        </ThemeProvider>
+      <FilterHead>Filters</FilterHead>
+      <ThemeProvider theme={theme}>
+        <FilterContent>
+          <ClubSelect setClubName={setClubName} clubName={clubName} />
+          <CategorySelect catName={catName} setCatName={setCatName} />
+          <DayTime setStartDate={setStartDate} setEndDate={setEndDate} />
+        </FilterContent>
+      </ThemeProvider>
     </Wrap>
   );
 }

@@ -11,7 +11,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const Received = (props) => {
-    const { user, setUser } = props;
+    const { setUser } = props;
     const [data, setData] = useState([]);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
@@ -82,6 +82,8 @@ const Received = (props) => {
                 navigate('/login');
             }, 2000);
         }
+
+        //eslint-disable-next-line
     }, []);
 
     const vertical = 'top'
@@ -101,7 +103,7 @@ const Received = (props) => {
             <Navbar textContent={"Requests - Received"} />
             <div className='min-h-screen flex flex-row gap-4 p-4'>
                 <Filter></Filter>
-                <RequestReceived user={user} data={data} setData={setData}></RequestReceived>
+                <RequestReceived data={data} setData={setData}></RequestReceived>
             </div>
         </div>
     )

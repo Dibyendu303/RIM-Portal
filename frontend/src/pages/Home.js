@@ -17,11 +17,7 @@ const Home = (props) => {
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
     const [openNetworkErrorMsg, setOpenNetworkErrorMsg] = useState(false);
     const [query, setQuery] = useState("");
-    const [startDate, setStartDate] = useState(978287400000);
-    const [endDate, setEndDate] = useState(Date.now());
-    const [clubName, setClubName] = useState([]);
-    const [catName, setCatName] = useState([]);
-
+    const {startDate, setStartDate, endDate, setEndDate, clubName, setClubName, catName, setCatName}=props;
 
     const handleClickErrorMsg = () => {
         setOpenErrorMsg(true);

@@ -87,7 +87,15 @@ module.exports.newRequest = (req, res) => {
 module.exports.deleteRequest = async (req, res) => {
     try {
         const id = req.body.ID;
-        // console.log("Delete item api called ", id);
+        const targetRequest = await Request.findOne({ _id: id });
+        const time = {
+            "Start": targetRequest.inTime,
+            "End": targetRequest.outTime
+        };
+        const item = await Item.findOneAndUpdate(
+            { _id: targetRequest.itemId },
+            { "status": "bcd", $pull: { "occupiedTime": time } }
+        );
         Request.findByIdAndRemove(id, (err, doc) => {
             if (!err) {
                 res.status(200).send({ result: "Success" });

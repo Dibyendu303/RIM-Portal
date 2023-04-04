@@ -1003,7 +1003,9 @@ export default function EnhancedTable(props) {
 
     const searchFunc = (query, clubName, catName, startDate = 0, endDate = Date.now()) => {
         var results = data.filter((item) => {
-            return item.name.toLowerCase().includes(query.toLowerCase());
+            if (item.name)
+                return item.name.toLowerCase().includes(query.toLowerCase());
+            return false;
         });
 
         if (typeof clubName === "object" && clubName.length !== 0) {
@@ -1045,7 +1047,10 @@ export default function EnhancedTable(props) {
 
     };
 
-    var searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    let searchResults = [];
+    if (data.length !== 0) {
+        searchResults = searchFunc(query, clubName, catName, startDate, endDate);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -1061,18 +1066,18 @@ export default function EnhancedTable(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={searchResults.length}
+                                rowCount={data.length}
                             />
                             <TableBody>
-                                {stableSort(searchResults, getComparator(order, orderBy))
+                                {stableSort(data, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} data={searchResults} setData={setData} user={user} />
+                                        <Row key={index} row={row} index={index} data={data} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>
                     </TableContainer>
                 </Paper>
-                {data.length === 0 ?
+                {searchResults.length === 0 ?
                     <>
                         <p className='text-white/80 text-2xl text-center font-medium'> No records to display</p>
                     </>

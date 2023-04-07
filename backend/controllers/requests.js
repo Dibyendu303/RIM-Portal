@@ -29,20 +29,13 @@ module.exports.getReceivedRequests = async (req, res) => {
 
 module.exports.acceptRequest = async (req, res) => {
     try {
-        // const user = await User.findOne({userID: req.user.userID});
         const targetRequest = await Request.findOneAndUpdate(
             { _id: req.body.requestId },
-            // {requestStatus:`Approved by ${req.user.club}`}
             { requestStatus: `Approved` }
         );
-        const newTime = {
-            "Start": targetRequest.inTime,
-            "End": targetRequest.outTime
-        };
-        // newTime = {Start : "2016-05-18T16:00:00Z", End: "2016-05-18T16:00:00Z"}  //Example
         const item = await Item.findOneAndUpdate(
-            { _id: targetRequest.itemId },
-            { "status": "bcd", $push: { "occupiedTime": newTime } }
+            { _id: targetRequest?.itemId },
+            { "status": "bcd", $push: { "bookings": targetRequest } }
         );
         res.json({
             item: item,
@@ -88,13 +81,13 @@ module.exports.deleteRequest = async (req, res) => {
     try {
         const id = req.body.ID;
         const targetRequest = await Request.findOne({ _id: id });
-        const time = {
-            "Start": targetRequest.inTime,
-            "End": targetRequest.outTime
-        };
+        // const time = {
+        //     "Start": targetRequest.inTime,
+        //     "End": targetRequest.outTime
+        // };
         const item = await Item.findOneAndUpdate(
             { _id: targetRequest.itemId },
-            { "status": "bcd", $pull: { "occupiedTime": time } }
+            { "status": "bcd", $pull: { "bookings": targetRequest } }
         );
         Request.findByIdAndRemove(id, (err, doc) => {
             if (!err) {

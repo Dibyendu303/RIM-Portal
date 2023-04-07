@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const ApprovedRequest = require('./requestSchema');
+const ItemDocument = require('./itemDocumentSchema')
+
 
 const itemSchema = new mongoose.Schema({
     "name": String,
@@ -7,18 +10,17 @@ const itemSchema = new mongoose.Schema({
     "heldBy": String,
     "quantity": Number,
     "purchasedOn": Number,
-    "bill": String,
-    "sanctionLetter": String,
     "purchaseOrder": String,
-    "inspectionReport": String,
     "status": String,
     "remarks": String,
-    "occupiedTime": [
-        {
-            "Start": Number,
-            "End": Number
-        }
-    ]
-});
+    "bill": String,
+    "sanctionLetter": String,
+    "inspectionReport": String,
+    "itemDocument": {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ItemDocument',
+      },
+    "bookings": [ApprovedRequest.schema]
+},{ timestamps: true });
 
 module.exports = mongoose.model("Item", itemSchema);

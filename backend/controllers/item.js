@@ -20,7 +20,6 @@ module.exports.addItem = async (req, res) => {
     let purchaseURL = "";
     let inspectionURL = "";
     const timestamp = Date.now();
-
     if (req.files['bill']) {
         const fileNameBill = `${req.files['bill'][0].originalname.split(".")[0]}_${timestamp}.${req.files['bill'][0].originalname.split(".")[1]}`;
         const billRef = ref(storage, fileNameBill);
@@ -99,7 +98,7 @@ module.exports.addItem = async (req, res) => {
         "inspectionReport": inspectionURL,
         "status": data.status,
         "remarks": data.remarks,
-        "occupiedTime": []
+        "bookings": []
     }
     const newItem = new Item(item);
     try {

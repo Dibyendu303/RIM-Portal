@@ -328,11 +328,11 @@ function Row(props) {
     //     }
     // ];
 
-    const timeSlot = row.occupiedTime;
+    const bookings = row.bookings;
 
     //set occupied time to next nearest hour   
-    const occupiedTime = timeSlot.map((item) => {
-        return { Start: roundMinutes(item.Start), End: roundMinutes(item.End) };
+    const occupiedTime = bookings.map((request) => {
+        return { Start: roundMinutes(request.inTime), End: roundMinutes(request.outTime) };
     })
 
     useEffect(() => {
@@ -353,7 +353,7 @@ function Row(props) {
         // console.log("endRange: " + endRange);
         let flag = false;
         occupiedTime.forEach((item => {
-            if (startRange <= item.Start && item.End <= endRange) {
+            if (startRange <= item.inTime && item.outTime <= endRange) {
                 flag = true;
             }
         }))
@@ -375,7 +375,7 @@ function Row(props) {
         // console.log(time1 + " " + time2);
         let flag = false;
         occupiedTime.forEach((item => {
-            if (item.Start <= time1 && time2 <= item.End) {
+            if (item.inTime <= time1 && time2 <= item.outTime) {
                 flag = true;
             }
         }))
@@ -391,7 +391,7 @@ function Row(props) {
             // console.log("hours: " + hour1 + " " + hour2);
             let flag = false;
             occupiedTime.forEach((item => {
-                if (item.Start <= hour1 && hour2 <= item.End) {
+                if (item.inTime <= hour1 && hour2 <= item.outTime) {
                     flag = true;
                 }
             }))
@@ -409,7 +409,7 @@ function Row(props) {
             // console.log("hours: " + hour1 + " " + hour2);
             let flag = false;
             occupiedTime.forEach((item => {
-                if (item.Start <= hour1 && hour2 <= item.End) {
+                if (item.inTime <= hour1 && hour2 <= item.outTime) {
                     flag = true;
                 }
             }))

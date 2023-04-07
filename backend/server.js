@@ -7,7 +7,7 @@ const corsOptions = {
 	credentials: true,            //access-control-allow-credentials:true
 	optionSuccessStatus: 200,
 }
-
+const itemsCronJob = require('./controllers/cronJob');
 app.use(cors(corsOptions))
 // const cookieParser = require("cookie-parser");
 const itemRouter = require("./routes/itemRoutes.js");
@@ -32,5 +32,5 @@ mongoose
 app.use("/item", itemRouter);
 app.use("/request", requestRouter);
 
-
-
+///cronJob
+itemsCronJob()

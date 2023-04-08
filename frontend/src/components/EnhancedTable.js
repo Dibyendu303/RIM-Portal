@@ -1010,10 +1010,12 @@ export default function EnhancedTable(props) {
 
         if (typeof clubName === "object" && clubName.length !== 0) {
             results = results.filter((item) => {
-                for (let j = 0; j < clubName.length; j++) {
-                    const element = clubName[j].toLowerCase();
-                    if ((item.ownedBy.toLowerCase() === element) || (item.heldBy.toLowerCase() === element)) {
-                        return true;
+                if(typeof(item.ownedBy) === "string" && typeof(item.heldBy) === "string"){
+                    for (let j = 0; j < clubName.length; j++) {
+                        const element = clubName[j].toLowerCase();
+                        if ((item.ownedBy.toLowerCase() === element) || (item.heldBy.toLowerCase() === element)) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -1023,10 +1025,12 @@ export default function EnhancedTable(props) {
         if (typeof catName === "object" && catName.length !== 0) {
 
             results = results.filter((item) => {
-                for (let j = 0; j < catName.length; j++) {
-                    const element = catName[j].toLowerCase();
-                    if (item.category.toLowerCase() === element) {
-                        return true;
+                if(typeof(item.category) === "string"){
+                    for (let j = 0; j < catName.length; j++) {
+                        const element = catName[j].toLowerCase();
+                        if (item.category.toLowerCase() === element) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -1066,12 +1070,12 @@ export default function EnhancedTable(props) {
                                 order={order}
                                 orderBy={orderBy}
                                 onRequestSort={handleRequestSort}
-                                rowCount={data.length}
+                                rowCount={searchResults.length}
                             />
                             <TableBody>
-                                {stableSort(data, getComparator(order, orderBy))
+                                {stableSort(searchResults, getComparator(order, orderBy))
                                     .map((row, index) =>
-                                        <Row key={index} row={row} index={index} data={data} setData={setData} user={user} />
+                                        <Row key={index} row={row} index={index} data={searchResults} setData={setData} user={user} />
                                     )}
                             </TableBody>
                         </Table>

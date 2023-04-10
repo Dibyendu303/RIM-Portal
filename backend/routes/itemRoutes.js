@@ -27,7 +27,8 @@ itemRouter.route("/")
 itemRouter.put("/return", returnItem);
 itemRouter.get("/download", authenticateToken, download);
 itemRouter.put("/:id",editItem)
-itemRouter.put('/:id/documents/:documentType',upload.single("file"),editDocument)
+// itemRouter.put("/document/:documentId",editDocument)
+itemRouter.put('/:documentId/:documentType',upload.single("file"),editDocument)
 itemRouter.post("/upload", upload.single("image"),uploadImage)
 module.exports = itemRouter;
 

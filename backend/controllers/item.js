@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const Item = require("../models/itemSchema.js");
+const ItemDocument = require("../models/itemDocumentSchema.js");
 const {
   ref,
   getDownloadURL,
   uploadBytesResumable,
 } = require("firebase/storage");
 const storage = require("../config/config.js");
-const ItemDocument = require("../models/itemDocumentSchema.js");
 const _ = require("lodash");
 
 const uploadImageFunction = async (file) => {
@@ -279,39 +279,39 @@ module.exports.editItem = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
-
 module.exports.editDocument = async (req, res) => {
-    const itemId = req.params.id;
-    const fieldName = req.params.documentType;
-    try {
-      // Upload the new document to the server
-      const url = await uploadImageFunction(req.file);
-      // Get the Item object for the specified item ID
-      const item = await Item.findOne({ _id: itemId }).populate('itemDocument');
-      if (!item) {
-        return res.status(404).json({ error: `Item ${itemId} not found` });
-      }
-  
-      // Get the ItemDocument object for the specified field name
-      console.log(item.itemDocument)
-      const itemDocument = item.itemDocument
-      itemDocument.fieldName = url;
-    //   if (!itemDocumentField) {
-    //     return res.status(404).json({ error: `No ${fieldName} document found for item ${itemId}` });
-    //   }
-  
-      // Update the value of the specified field in the ItemDocument object
-    //   itemDocumentField.value = url;
-  
-      // Save the ItemDocument object to the database
-      const updatedItemDocument = await itemDocument.save();
-  
-      res.status(200).json({ message: `Successfully updated to ${updatedItemDocument} document for item ${itemId} to ${url}` });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Server error" });
+  let url;
+  const documentId = req.params.documentId;
+  const documentType = req.params.documentType;
+  try {
+    if (!req.file || Object.keys(req.file).length === 0) {
+      throw new Error('Image not provided');
     }
+    url = await uploadImageFunction(req.file);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error while uploading image');
   }
+  try {
+    const update = {
+      [documentType]: url,
+    };
+    // Update the document in the ItemDocument collection
+    const updatedDocument = await ItemDocument.findByIdAndUpdate(
+      documentId,
+      update,
+      {
+        new: true,
+      }
+    );
+    // Return the updated document
+    res.json(updatedDocument);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error while updating document');
+  }
+};
+
   
 
 module.exports.returnItem = async (req, res) => {

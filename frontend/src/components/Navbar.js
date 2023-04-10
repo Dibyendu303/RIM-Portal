@@ -110,25 +110,25 @@ function Navbar(props) {
     };
     console.log(options);
     try {
-      alert("Backend not updated yet");
-      // axios.post("http://localhost:8080/item", options, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // }).then((res) => {
-      //   console.log(res.data);
-      //   const newItem = res.data.item;
-      //   const newData = [...data, newItem];
-      //   setData(newData);
-      //   handleCloseAddModal();
-      //   handleClickSuccessMsg();
-      //   // alert('Item added successfully');
-      // }).catch((e) => {
-      //   handleCloseAddModal();
-      //   handleClickErrorMsg();
-      //   // alert('Unable to add item. Please try again later');
+      // alert("Backend not updated yet");
+      axios.post("http://localhost:8080/item", options, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }).then((res) => {
+        console.log(res.data);
+        const newItem = res.data.item;
+        const newData = [...data, newItem];
+        setData(newData);
+        handleCloseAddModal();
+        handleClickSuccessMsg();
+        // alert('Item added successfully');
+      }).catch((e) => {
+        handleCloseAddModal();
+        handleClickErrorMsg();
+        // alert('Unable to add item. Please try again later');
 
-      // });
+      });
     }
     catch (e) {
       handleCloseAddModal();

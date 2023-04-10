@@ -223,13 +223,11 @@ module.exports.addItem = async (req, res) => {
 
   try {
     const addedItems = await Promise.all(promises);
-    res
-      .status(201)
-      .send({
-        result: "Success",
-        items: addedItems,
-        itemDocument: savedItemDocument,
-      });
+    res.status(201).send({
+      result: "Success",
+      items: addedItems,
+      itemDocument: savedItemDocument,
+    });
   } catch (err) {
     res.status(500).send(err);
     console.log(err);
@@ -285,12 +283,12 @@ module.exports.editDocument = async (req, res) => {
   const documentType = req.params.documentType;
   try {
     if (!req.file || Object.keys(req.file).length === 0) {
-      throw new Error('Image not provided');
+      throw new Error("Image not provided");
     }
     url = await uploadImageFunction(req.file);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error while uploading image');
+    res.status(500).send("Server error while uploading image");
   }
   try {
     const update = {
@@ -308,21 +306,22 @@ module.exports.editDocument = async (req, res) => {
     res.json(updatedDocument);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error while updating document');
+    res.status(500).send("Server error while updating document");
   }
 };
 
-  
-
 module.exports.returnItem = async (req, res) => {
   try {
-    const item = await Item.findOneAndUpdate(
+    const updatedItem = await Item.findOneAndUpdate(
       { _id: req.body.itemId },
-      { heldBy: req.body.heldBy }
+      { heldBy: req.body.heldBy, status: "available" }
     );
-    if (item) {
-      res.status(200).send({ result: "Success", item: item });
-    } else res.status(404).send({ result: "Item Not Found" });
+    if (!updatedItem) res.status(404).send({ result: "Item Not Found" });
+    // Remove the first request from the bookings array
+    updatedItem.bookings.shift();
+    await updatedItem.save();
+
+    res.json({ updatedItem, updatedBooking });
   } catch (err) {
     res.status(500).send(err);
   }

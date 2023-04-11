@@ -14,9 +14,8 @@ const uploadImageFunction = async (file) => {
   if (!file) {
     throw new Error("No file provided");
   }
-  const fileName = `${file.originalname.split(".")[0]}_${timestamp}.${
-    file.originalname.split(".")[1]
-  }`;
+  const fileName = `${file.originalname.split(".")[0]}_${timestamp}.${file.originalname.split(".")[1]
+    }`;
   const fileRef = ref(storage, fileName);
   try {
     const fileSnapshot = await uploadBytesResumable(fileRef, file.buffer, {
@@ -33,9 +32,8 @@ module.exports.uploadImage = async (req, res) => {
   const timestamp = Date.now();
   if (req.file) {
     console.log(req.file);
-    const fileName = `${req.file.originalname.split(".")[0]}_${timestamp}.${
-      req.file.originalname.split(".")[1]
-    }`;
+    const fileName = `${req.file.originalname.split(".")[0]}_${timestamp}.${req.file.originalname.split(".")[1]
+      }`;
     const fileRef = ref(storage, fileName);
 
     try {
@@ -59,9 +57,8 @@ module.exports.uploadImage = async (req, res) => {
 module.exports.download = async (req, res) => {
   const timestamp = Date.now();
   if (req.files["bill"]) {
-    const fileNameBill = `${
-      req.files["bill"][0].originalname.split(".")[0]
-    }_${timestamp}.${req.files["bill"][0].originalname.split(".")[1]}`;
+    const fileNameBill = `${req.files["bill"][0].originalname.split(".")[0]
+      }_${timestamp}.${req.files["bill"][0].originalname.split(".")[1]}`;
     const billRef = ref(storage, fileNameBill);
 
     try {
@@ -83,6 +80,7 @@ module.exports.download = async (req, res) => {
 };
 
 module.exports.addItem = async (req, res) => {
+  console.log("Add item API called");
   let billURL = "";
   let sanctionURL = "";
   let purchaseURL = "";
@@ -90,9 +88,8 @@ module.exports.addItem = async (req, res) => {
   let savedItemDocument = {};
   const timestamp = Date.now();
   if (req.files["bill"]) {
-    const fileNameBill = `${
-      req.files["bill"][0].originalname.split(".")[0]
-    }_${timestamp}.${req.files["bill"][0].originalname.split(".")[1]}`;
+    const fileNameBill = `${req.files["bill"][0].originalname.split(".")[0]
+      }_${timestamp}.${req.files["bill"][0].originalname.split(".")[1]}`;
     const billRef = ref(storage, fileNameBill);
 
     try {
@@ -108,16 +105,11 @@ module.exports.addItem = async (req, res) => {
       res.status(500).send(err);
       console.log(err);
     }
-  } else {
-    return res.status(400).json({ error: "Bill file is required" });
   }
-
   if (req.files["sanctionLetter"]) {
-    const fileNameSanctionLetter = `${
-      req.files["sanctionLetter"][0].originalname.split(".")[0]
-    }_${timestamp}.${
-      req.files["sanctionLetter"][0].originalname.split(".")[1]
-    }`;
+    const fileNameSanctionLetter = `${req.files["sanctionLetter"][0].originalname.split(".")[0]
+      }_${timestamp}.${req.files["sanctionLetter"][0].originalname.split(".")[1]
+      }`;
     const sanctionRef = ref(storage, fileNameSanctionLetter);
 
     try {
@@ -157,11 +149,9 @@ module.exports.addItem = async (req, res) => {
   //   }
 
   if (req.files["inspectionReport"]) {
-    const fileNameInspectionReport = `${
-      req.files["inspectionReport"][0].originalname.split(".")[0]
-    }_${timestamp}.${
-      req.files["inspectionReport"][0].originalname.split(".")[1]
-    }`;
+    const fileNameInspectionReport = `${req.files["inspectionReport"][0].originalname.split(".")[0]
+      }_${timestamp}.${req.files["inspectionReport"][0].originalname.split(".")[1]
+      }`;
     const inspectionReportRef = ref(storage, fileNameInspectionReport);
     try {
       const inspectionReportSnapshot = await uploadBytesResumable(
@@ -279,6 +269,7 @@ module.exports.editItem = async (req, res) => {
 };
 module.exports.editDocument = async (req, res) => {
   let url;
+  // console.log(req.params);
   const documentId = req.params.documentId;
   const documentType = req.params.documentType;
   try {

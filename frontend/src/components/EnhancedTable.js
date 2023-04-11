@@ -174,9 +174,9 @@ EnhancedTableHead.propTypes = {
 function Row(props) {
     const { row, index, data, setData, user } = props;
     const labelId = `enhanced-table-checkbox-${index}`;
-    const [purchaseDate, setPurchaseDate] = useState(dayjs());
-    const [ownedBy, setOwnedBy] = useState('');
-    const [itemName, setItemName] = useState('');
+    const [purchaseDate, setPurchaseDate] = useState(row.purchasedOn);
+    const [ownedBy, setOwnedBy] = useState(row.ownedBy);
+    const [itemName, setItemName] = useState(row.name);
     const [open, setOpen] = useState(false);
     const [openRequest, setOpenRequest] = useState(false);
     const [startDate, setStartDate] = useState(dayjs());
@@ -190,12 +190,16 @@ function Row(props) {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [remarks, setRemarks] = useState('');
     const [quantity, setQuantity] = useState('');
-    const [editRemarks, setEditRemarks] = useState('');
-    const [editQuantity, setEditQuantity] = useState('');
+    const [editRemarks, setEditRemarks] = useState(row.remarks);
+    const [editQuantity, setEditQuantity] = useState(row.quantity);
     const [pageNo, setPageNo] = useState('');
     const [serialNo, setSerialNo] = useState('');
     const [registerNo, setRegisterNo] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState(row.category);
+    const [bill, setBill] = useState(null);
+    const [sanctionLetter, setSanctionLetter] = useState(null);
+    const [purchaseOrder, setPurchaseOrder] = useState(null);
+    const [inspectionReport, setInspectionReport] = useState(null);
     const [openSuccessMsg, setOpenSuccessMsg] = useState(false);
     const [openErrorMsg, setOpenErrorMsg] = useState(false);
     const [openEditSuccessMsg, setOpenEditSuccessMsg] = useState(false);
@@ -451,29 +455,77 @@ function Row(props) {
             console.log("Remove item request cancelled");
         }
     }
-    const handleSubmitEditModal = (id) => {
-        try {
-            // const options = { "ID": id };
-            // console.log(options);
+    const handleSubmitEditModal = (id, documentId) => {
+        const options = {
+            "name": itemName,
+            "category": category,
+            "quantity": editQuantity,
+            "ownedBy": ownedBy,
+            "purchasedOn": purchaseDate,
+            "status": "Available",
+            "remarks": editRemarks,
+            "pageNo": pageNo,
+            "serialNo": serialNo,
+            "registerNo": registerNo,
+            "bookings": []
 
-            // axios.delete("http://localhost:8080/item", {
-            //     headers: {
-            //         Authorization: "usertoken"
-            //     },
-            //     data: {
-            //         "ID": id
-            //     }
-            // })
-            //     .then((res) => {
-            //         const newData = data.filter(el => el._id !== id);
-            //         setData(newData);
-            //         handleClickEditSuccessMsg();
-            //     }).catch((e) => {
-            //          handleClickEditErrorMsg();
-            //         // alert('Unable to delete item. Please try again later');
-            //     });
+        };
+
+        const arr = [];
+        if (bill)
+            arr.push({
+                "name": "bill",
+                "item": bill
+            }
+            );
+        if (inspectionReport)
+            arr.push({
+                "name": "inspectionReport",
+                "item": inspectionReport
+            }
+            );
+        if (purchaseOrder)
+            arr.push({
+                "name": "purchaseOrder",
+                "item": purchaseOrder
+            }
+            );
+        if (sanctionLetter)
+            arr.push({
+                "name": "sanctionLetter",
+                "item": sanctionLetter
+            }
+            );
+
+        try {
+            axios.all([
+                axios.put(`http://localhost:8080/item/${id}`, options, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }),
+                arr.map(el => {
+                    return (
+                        axios.put(`http://localhost:8080/item/${documentId}/${el.name}`, {
+                            "file": el.item
+                        }, {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        })
+                    )
+                })
+            ]).then((res) => {
+                console.log("Item updated");
+                handleCloseEditModal();
+                handleClickEditSuccessMsg();
+            }).catch((e) => {
+                handleCloseEditModal();
+                handleClickEditErrorMsg();
+            });
         }
         catch (e) {
+            handleCloseEditModal();
             handleClickNetworkErrorMsg();
         }
     }
@@ -921,35 +973,15 @@ function Row(props) {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div className='flex justify-between gap-4'>
-                            <div>
-                                <p className='font-medium'>Sanction letter</p>
-                                <Button variant="outlined" component="label" fullWidth>
-                                    Upload
-                                    <input hidden accept="image/*" multiple type="file" />
-                                </Button>
-                            </div>
-                            <div>
-                                <p className='font-medium'>Purchase order</p>
-                                <Button variant="outlined" component="label" fullWidth>
-                                    Upload
-                                    <input hidden accept="image/*" multiple type="file" />
-                                </Button>
-                            </div>
-                            <div>
-                                <p className='font-medium'>Bill</p>
-                                <Button variant="outlined" component="label">
-                                    Upload
-                                    <input hidden accept="image/*" multiple type="file" />
-                                </Button>
-                            </div>
-                            <div>
-                                <p className='font-medium'>Inspection Report</p>
-                                <Button variant="outlined" component="label" fullWidth>
-                                    Upload
-                                    <input hidden accept="image/*" multiple type="file" />
-                                </Button>
-                            </div>
+                        <div className='grid grid-cols-3 gap-4 items-center'>
+                            <p className='font-medium'>Sanction letter:</p>
+                            <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="sanctionLetter" id="sanctionLetter" onChange={(e) => setSanctionLetter(e.target.files[0])} />
+                            <p className='font-medium'>Purchase Order:</p>
+                            <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="purchaseOrder" id="purchaseOrder" onChange={(e) => setPurchaseOrder(e.target.files[0])} />
+                            <p className='font-medium'>Bill:</p>
+                            <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="bill" id="bill" onChange={(e) => setBill(e.target.files[0])} />
+                            <p className='font-medium'>Inspection Report:</p>
+                            <input className="col-span-2 text-sm font-medium text-gray-600 file:bg-[#1976D2] file:border-none file:text-white file:px-6 file:py-2 file:rounded-[4px] drop-shadow-md file:cursor-pointer font-[Roboto] file:text-sm file:uppercase file:font-medium cursor-pointer file:hover:bg-[#2368ac]" type="file" name="inspectionReport" id="inspectionReport" onChange={(e) => setInspectionReport(e.target.files[0])} />
                         </div>
                         <div>
                             <p className='font-medium'>Stockbook details:</p>
@@ -971,7 +1003,7 @@ function Row(props) {
                         padding: "0.5rem 2rem",
                         // boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)"
                     }}>Cancel</Button>
-                    <Button variant="contained" onClick={() => handleSubmitEditModal(row._id)} style={{
+                    <Button variant="contained" onClick={() => handleSubmitEditModal(row._id, row.itemDocument)} style={{
                         backgroundColor: "#021018",
                         color: "white",
                         padding: "0.5rem 2rem",
@@ -1010,7 +1042,7 @@ export default function EnhancedTable(props) {
 
         if (typeof clubName === "object" && clubName.length !== 0) {
             results = results.filter((item) => {
-                if(typeof(item.ownedBy) === "string" && typeof(item.heldBy) === "string"){
+                if (typeof (item.ownedBy) === "string" && typeof (item.heldBy) === "string") {
                     for (let j = 0; j < clubName.length; j++) {
                         const element = clubName[j].toLowerCase();
                         if ((item.ownedBy.toLowerCase() === element) || (item.heldBy.toLowerCase() === element)) {
@@ -1025,7 +1057,7 @@ export default function EnhancedTable(props) {
         if (typeof catName === "object" && catName.length !== 0) {
 
             results = results.filter((item) => {
-                if(typeof(item.category) === "string"){
+                if (typeof (item.category) === "string") {
                     for (let j = 0; j < catName.length; j++) {
                         const element = catName[j].toLowerCase();
                         if (item.category.toLowerCase() === element) {
